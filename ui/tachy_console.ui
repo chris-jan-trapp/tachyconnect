@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,20,0">
+      <item>
+       <widget class="QComboBox" name="dialect_selecto"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="command_selector"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="args"/>
+      </item>
+      <item>
+       <widget class="QCommandLinkButton" name="send_command">
+        <property name="text">
+         <string>send</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QPlainTextEdit" name="log_viewer">
+      <property name="undoRedoEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuTachy">
+    <property name="title">
+     <string>Tachy</string>
+    </property>
+    <addaction name="actionconnect"/>
+    <addaction name="actionidentify"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
+   </widget>
+   <addaction name="menuTachy"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionconnect">
+   <property name="text">
+    <string>&amp;connect</string>
+   </property>
+  </action>
+  <action name="actionidentify">
+   <property name="text">
+    <string>&amp;identify</string>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
