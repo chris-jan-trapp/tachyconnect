@@ -13,11 +13,15 @@ class ReplyHandler(QObject):
             self.has_fall_back = True
 
     
-    def register_command(self, label, signal_name):
+    def register_command(self, label, signal_name=None):
+        if signal_name is None:
+            signal_name = label
         self.command_map[label] = self.signals[signal_name]
 
-    def add_connection(self, signal, signal_name, slot):
-        self.signals[signal_name].connect(slot)
+    def add_connection(self, signal_name, types, slot):
+        signal = pyqtSignal(*types)
+        self.signals[signal_name] = signal
+        signal.connect(slot)
 
     def disconnect_all(self):
         for signal in self.signals.values():
@@ -30,6 +34,7 @@ class ReplyHandler(QObject):
         signal = self.signals.get(request['message'].label)
         if signal:
             return True
+            # add signal emission and result extraction
         if self.has_fall_back:
             self.fall_back_signal.emit((request, reply))
             return request, reply
