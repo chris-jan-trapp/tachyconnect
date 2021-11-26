@@ -13,8 +13,8 @@ class ReplyHandler(QObject):
             self.has_fall_back = True
 
     
-    def register_command(self, command, signal_name):
-        self.command_map[command.label] = self.signals[signal_name]
+    def register_command(self, label, signal_name):
+        self.command_map[label] = self.signals[signal_name]
 
     def add_connection(self, signal, signal_name, slot):
         self.signals[signal_name].connect(slot)

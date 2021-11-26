@@ -53,11 +53,11 @@ class COM_SetDoublePrecision(TachyRequest):
 
 
 class COM_SwitchOffTPS(TachyRequest):
-    pass
+    gsi_command = "b"
 
 
 class COM_SwitchOnTPS(TachyRequest):
-    pass
+    gsi_command = "a"
 
 
 class CSV_GetDateTime(TachyRequest):
@@ -69,7 +69,7 @@ class CSV_GetDeviceConfig(TachyRequest):
 
 
 class CSV_GetInstrumentName(TachyRequest):
-    pass
+    gsi_command = "GET/I/WI13"
 
 
 class CSV_GetInstrumentNo(TachyRequest):
@@ -81,7 +81,7 @@ class CSV_GetIntTemp(TachyRequest):
 
 
 class CSV_GetSWVersion(TachyRequest):
-    pass
+    gsi_command = "GET/I/WI593;"
 
 
 class CSV_SetDateTime(TachyRequest):
@@ -153,7 +153,7 @@ class TMC_GetPrismCorr(TachyRequest):
 
 
 class TMC_GetRefractiveCorr(TachyRequest):
-    pass
+    gsi_command = "GET/I/WI538"
 
 
 class TMC_GetRefractiveMethod(TachyRequest):

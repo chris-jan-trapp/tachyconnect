@@ -4,9 +4,9 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import pyqtSignal
 from ui.main_window import Ui_MainWindow
-from Communication.ts_control import Dispatcher, MessageQueue
-from Communication.ReplyHandler import ReplyHandler
-from Communication import TachyRequest
+from tachyconnect.ts_control import Dispatcher, MessageQueue
+from tachyconnect.ReplyHandler import ReplyHandler
+from tachyconnect import TachyRequest
 
 
 class Window(QMainWindow, Ui_MainWindow):
