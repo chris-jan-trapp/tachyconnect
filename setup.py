@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="tachyconnect-pkg-gbv",
-    version="0.0.5",
+    version="0.0.6",
     author="Christian Trapp",
     author_email="trapp@gbv.de",
     description="Leica total stations and Qt via python",
