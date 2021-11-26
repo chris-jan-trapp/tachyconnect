@@ -1,2 +1,4 @@
 *.pyc
 __pycache__
+dist
+/src/tachyconnect_pkg_gbv.egg-info
