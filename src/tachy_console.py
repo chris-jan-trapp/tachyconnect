@@ -15,10 +15,12 @@ class Window(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        
         self.reply_handler = ReplyHandler(fall_back=self.stringify)
+        self.reply_handler.register_command(TachyRequest.TMC_GetHeight, self.undict)
         self.dispatcher = Dispatcher(MessageQueue(1), MessageQueue(7), self.reply_handler)
-        self.connectSignalsSlots()
 
+        self.connectSignalsSlots()
     
     def connectSignalsSlots(self):
         self.action_Quit.triggered.connect(self.close)
@@ -31,6 +33,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.log_viewer.setPlainText(self.log_viewer.toPlainText() + "\n" + text)
         scroll_bar = self.log_viewer.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
+
+    def undict(self, d):
+        self.log_append(str(d))
 
     def stringify(self, *args):
         self.log_append(str(args))

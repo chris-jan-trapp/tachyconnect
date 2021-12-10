@@ -1,11 +1,12 @@
 from . import gc_constants as gc
 from .ts_control import GeoCOMCommand, GSICommand, CommunicationConstants
+from PyQt5.QtCore import QObject, pyqtSignal
 
-
-class TachyRequest:
+class TachyRequest(QObject):
     gsi_command = ""
     gc_command = ""
     unpacking_keys = {}
+    signal = pyqtSignal(QObject)
 
     def __init__(self, time_out = 2, *args) -> None:
         self.gc_command = str(gc.COMMAND_CODES.get(self.label))

@@ -43,7 +43,7 @@ This is legacy code that has been replaced by 'TachyRequest.py` that primaryly e
 
 Here you find names apping for the constants that are used as return codes (`GRC_...`) and commands (`BMM...`, `COM_...`, `CSV...`...).
 You also get a set of dicts that map the return codes to their names and a more verbose message.
-For commands you get a dict that maps command names to codes.
+For commands you get a dict that maps command names to the numerical codes.
 
 
 ### Abstraction
@@ -63,7 +63,7 @@ class COM_SwitchOffTPS(TachyRequest):
 The same name is used as label, which in turn can be used to link commands to slots.
 Each `TachyRequest` has a gsi command string, a geoCOM command string and also `unpacking_keys`, which are required to access the data in GSI replies.
 In the example above this would be '`instrumentZ`'.
-The constructor takes a time out in seconds (defaults to 2) and optional parameters, which will be attached to the actual request.
+The constructor takes a timeout in seconds (defaults to 2) and optional parameters, which will be attached to the actual request.
 
 
 #### `ReplyHandler.py`
