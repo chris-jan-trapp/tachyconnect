@@ -422,5 +422,5 @@ if __name__ == "__main__":
     print(parsed['pointId'])
 
     reply = "*88..10+0000000000000000"
-
+    reply = "*13....+0000000000TCR405"
     print(parse(reply))

@@ -12,12 +12,12 @@ The communication handling lives in its own thread and thus is non blocking.
 ## The Players
 
 ### Protocols
-`geo_com`, `gc_constants` and `GSI_parser` deal with creating ind interpreting messages in either protocoll.
+`geo_com`, `gc_constants` and `GSI_parser` deal with creating and interpreting messages in either protocol.
 
 
 #### `GSI_parser.py`
 
-This is mostly used to translate measurements that are triggered at the device and transmitted via serial, but is capable to read any sucessful reply to a GSI command.
+This is mostly used to translate measurements that are triggered at the device and transmitted via serial, but is capable to read any successful reply to a GSI command.
 The `parse(line)` function is the central element, the rest consists of definitions.
 It takes the ascii decoded bytes from the serial port an returns two dicts: 
 
@@ -31,27 +31,34 @@ print(parse(reply))
 ```
 
 The first carries the actual data, cast to an appropriate type, the second one provides a string that informs us about the unit. 
-The keys (except 'precision', which is attached py the parser) are taken from the `dict_units_attributes_digits`, around line 240 in the parser source.
-
+The keys (except 'precision', which is attached by the parser) are taken from the `dict_units_attributes_digits`, around line 240 in the parser source.
 
 #### `geo_com.py'
 
-This is legacy code that has been replaced by 'TachyRequest.py` that primaryly exists as design notes for Christian. 
+This is legacy code that has been replaced by 'TachyRequest.py` that primarily exists as design notes for Christian. 
 
 
 #### `gc_constants.py`
 
-Here you find names apping for the constants that are used as return codes (`GRC_...`) and commands (`BMM...`, `COM_...`, `CSV...`...).
+Here you find names for the constants that are used as return codes (`GRC_...`) and commands (`BMM...`, `COM_...`, `CSV...`...).
 You also get a set of dicts that map the return codes to their names and a more verbose message.
 For commands you get a dict that maps command names to the numerical codes.
 
 
 ### Abstraction
 
+Messages to and from the total station get a technical implementation which is then wrapped in an abstraction.
+The technical implementation handles the details of constructing the actual byte array that is sent over the serial connection and the extraction of results from the reply.
+This is done for GSI and geoCom and takes place in `ts_control.py`.
+
+The wrapper deals with the *intent* of a command e.g. "Take a measurement" and separates it from the two dialects. 
+
+
 #### `TachyRequest.py`
 
-TachyRequest is the base class from which individual commands are derived. 
-Individual commands bear the names of their geoCOM equivalent:
+TachyRequest contains classes for abstracted commands. 
+Each class represents one action that can be requested and provides the methods `get_gsi_command()` and `get_geocom_command()`.
+The commands bear the names of their geoCOM equivalent:
 
 ```python
 # Switch off device:
@@ -60,7 +67,15 @@ class COM_SwitchOffTPS(TachyRequest):
 
 ```
 
-The same name is used as label, which in turn can be used to link commands to slots.
+***NOTE: This is only partially implemented :( ***
+
+This is to be used in conjunction with an implementation map that informs the dispatcher, which dialect is used for each command by the connected total station. 
+When implementing a remote shut down button we would instantiate `COM_SwitchOffTPS` and submit it to the dispatcher.
+The dispatcher looks up which dialect implements the functionality and generate the relevant message by calling either `get_gsi_command()` or `get_geocom_command()` and append the result to the respective queue.
+***END of fiction***
+
+The class name is also used as label, which in turn can be used to link commands to slots.
+See the `ReplyHandler` documentation below for more on this.
 Each `TachyRequest` has a gsi command string, a geoCOM command string and also `unpacking_keys`, which are required to access the data in GSI replies.
 In the example above this would be '`instrumentZ`'.
 The constructor takes a timeout in seconds (defaults to 2) and optional parameters, which will be attached to the actual request.
@@ -68,10 +83,17 @@ The constructor takes a timeout in seconds (defaults to 2) and optional paramete
 
 #### `ReplyHandler.py`
 
-This guy provides the connections between Qt slots and total station replies.
+This guy was designed to provide a connection between Qt slots and total station replies, along the lines of "When the reply to a `TMC_GetCoordinate` request comes in, fire a `got_coordinate` signal.
 It also emits a fall back signal when it encounters replies that have no connected slot. 
+⚠️ ***THIS DOES NOT WORK*** because the design of Qt's signal/ slot architecture prohibits the creation of signal at runtime.
+
+***HOWEVER*** We can do the next best thing.
+Signals and slots are only really required for communication between treads. 
+As long as we stay in the main class of our widget, we can use callables instead of slots
+
 This slot should be passed to the ctor.
 Besides that the following methods are provided:
 
-1. `register_command(self, label, signal_name=None)`: Takes the label of a `TachyRequest` ⬆️ and an optional name for the signal that will be emitted when the reply to the requst is being received. If no signal name is provided, the label is used instead.
-1. `add_connection(self, signal_name, types, slot)`: 
+1. `register_command(self, command_class, slot)`: Takes any class from `TachyRequest` ⬆️ and a callable. When the reply to the request shows up, the result is extracted from the reply and passed to the callable which is then invoked. The association between requests and callables is implemented as a dict so each request can have at most one function to handle its results.
+1. `unregister_command(self, command_class)`: Allows to delete the association between a request and an action.
+1. `handle(self, request, reply)`: This is called from the dispatcher when a reply is being received on a queue. Note that the queue bundles each reply with the request that triggered it. The ReplyHandler now looks for an associated function to call. If none is found, request and reply are directed to the fallback signal (if provided earlier).

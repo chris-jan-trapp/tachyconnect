@@ -1,11 +1,10 @@
-from time import time
+from time import time, sleep
 from enum import Enum
 
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
-from PyQt5.QtCore import QEventLoop, QTimer, QThread, pyqtSignal
+from PyQt5.QtCore import QEventLoop, QObject, QTimer, QThread, pyqtSignal
 
 from . import gc_constants, GSI_Parser
-
 
 class CommunicationConstants:
     GSI = "GSI"
@@ -29,12 +28,15 @@ class CommunicationConstants:
     ]
 
 
-class TachyCommand:
+class TachyCommand(QObject):
     MESSAGE_PREFIX = ""
     REPLY_PREFIX = ""
     protocol = None
+    signal = pyqtSignal
 
-    def __init__(self, command: str, label = None, time_out = 2, *args) -> None:
+    def __init__(self, command: str, label = None, time_out = 2, signal = None, args = []) -> None:
+        super().__init__()
+        self.signal = signal
         self.command = command
         self.args = args
         self.transaction_id = 0
@@ -62,9 +64,9 @@ class TachyCommand:
 
 
 class GSICommand(TachyCommand):
-    def __init__(self, command: str, label = None, time_out = 2, *args) -> None:
-        super().__init__(command, label, time_out=time_out, *args)
-        selfprotocol=CommunicationConstants.GSI,
+    def __init__(self, command: str, label = None, time_out = 2, args = []) -> None:
+        super().__init__(command, label, time_out=time_out, args=args)
+        self.protocol=CommunicationConstants.GSI
 
     def get_transaction_id(self) -> int:
         return 1
@@ -83,8 +85,8 @@ class GSICommand(TachyCommand):
 class GeoCOMCommand(TachyCommand):
     MESSAGE_PREFIX = CommunicationConstants.GEOCOM_MESSAGE_PREFIX
 
-    def __init__(self, command: str, label = None, time_out = 2, *args) -> None:
-        super().__init__(command, label, time_out=time_out, *args)
+    def __init__(self, command: str, label = None, time_out = 2, signal = None, args = []) -> None:
+        super().__init__(command, label, time_out=time_out, signal=signal, args = args)
         self.protocol=CommunicationConstants.GEOCOM
 
     @property
@@ -110,6 +112,9 @@ class TachyReply:
         if self.ascii.startswith(CommunicationConstants.GEOCOM_REPLY_PREFIX) or self.ascii[:4] == "@W127":
             return CommunicationConstants.GEOCOM
         raise ValueError(f"Tachymeter reply uses unknown protocoll: {self.ascii}")
+    
+    def get_result(self):
+        raise NotImplemented("Has to be implemented for each subclass.")
 
     def success(self):
         return False
@@ -126,6 +131,9 @@ class GSIReply(TachyReply):
     def success(self):
         return self.ascii.startswith(GSI_Parser.REPLY_ACK)
 
+    def get_result(self):
+        return GSI_Parser.parse(self.ascii)
+        
 
 class GeoCOMReply(TachyReply):
     PREFIX = CommunicationConstants.GEOCOM_REPLY_PREFIX
@@ -137,6 +145,10 @@ class GeoCOMReply(TachyReply):
 
     def success(self):
         return self.ascii.startswith(GeoCOMReply.PREFIX)
+
+    def get_result(self):
+        payload = self.ascii.split(':')[1].strip()
+        return payload.split(",")
 
 
 class MessageQueue:
@@ -200,7 +212,7 @@ class Dispatcher(QThread):
         self.reply_types = {CommunicationConstants.GSI: GSIReply,
                             CommunicationConstants.GEOCOM: GeoCOMReply}
         self.reply_handler = reply_handler
-    
+
     def hook_up(self):
         # close port if connection is established
         self.log.emit("Connection attempt")
@@ -210,10 +222,8 @@ class Dispatcher(QThread):
             self.serial_disconnected.emit(port_name)
             return
         port_names = [port.portName() for port in QSerialPortInfo.availablePorts()]
-        if not port_names:
-            self.log.emit('no serial port found.')
         for port_name in port_names:
-            ping = Ping(port_name, timeout=2000)
+            ping = Ping(port_name, timeout=500)
             ping.found_tachy.connect(self.set_serial_port)
             ping.found_something.connect(self.send_log)
             ping.timed_out.connect(self.send_log)
@@ -306,3 +316,4 @@ class Ping(QThread):
 
         self.serial.close()
         self.quit()
+

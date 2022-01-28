@@ -18,7 +18,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,20,0">
       <item>
-       <widget class="QComboBox" name="dialect_selecto"/>
+       <widget class="QComboBox" name="dialect_selector"/>
       </item>
       <item>
        <widget class="QComboBox" name="command_selector"/>
@@ -62,6 +62,8 @@
     </property>
     <addaction name="actionconnect"/>
     <addaction name="actionidentify"/>
+    <addaction name="actionextract_capabilities"/>
+    <addaction name="actiondump_implementation_chart"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
@@ -81,6 +83,16 @@
   <action name="action_Quit">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionextract_capabilities">
+   <property name="text">
+    <string>extract capabilities</string>
+   </property>
+  </action>
+  <action name="actiondump_implementation_chart">
+   <property name="text">
+    <string>dump implementation chart</string>
    </property>
   </action>
  </widget>
