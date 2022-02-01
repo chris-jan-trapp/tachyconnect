@@ -29,261 +29,482 @@ class TachyRequest(QObject):
         return GeoCOMCommand(self.gc_command, self.get_class_name(), self.time_out, self.signal, *self.args)
 
 
-class BMM_BeepAlarm(TachyRequest):
-    pass
-
-
-class BMM_BeepNormal(TachyRequest):
-    pass
-
-
-class COM_GetDoublePrecision(TachyRequest):
-    pass
-
-
-class COM_GetSWVersion(TachyRequest):
-    pass
-
-
 class COM_NullProc(TachyRequest):
     pass
-
-
+    
+    
+class COM_Local(TachyRequest):
+    pass
+    
+    
 class COM_SetDoublePrecision(TachyRequest):
     pass
-
-
-class COM_SwitchOffTPS(TachyRequest):
-    gsi_command = "b"
-
-
+    
+    
+class COM_GetDoublePrecision(TachyRequest):
+    pass
+    
+    
+class COM_SetSendDelay(TachyRequest):
+    pass
+    
+    
+class COM_GetSWVersion(TachyRequest):
+    gsi_command = "GET/I/WI593;"
+    
+    
 class COM_SwitchOnTPS(TachyRequest):
     gsi_command = "a"
-
-
-class CSV_GetDateTime(TachyRequest):
+    
+    
+class COM_SwitchOffTPS(TachyRequest):
+    gsi_command = "b"
+    
+    
+class COM_GetBinaryAvailable(TachyRequest):
     pass
-
-
-class CSV_GetDeviceConfig(TachyRequest):
+    
+    
+class COM_SetBinaryAvailable(TachyRequest):
     pass
-
-
-class CSV_GetInstrumentName(TachyRequest):
-    gsi_command = "GET/I/WI13"
-
-
-class CSV_GetInstrumentNo(TachyRequest):
+    
+    
+class COM_EnableSignOff(TachyRequest):
     pass
-
-
-class CSV_GetIntTemp(TachyRequest):
-    pass
-
-
-class CSV_GetSWVersion(TachyRequest):
-    gsi_command = "GET/I/WI593;"
-
-
-class CSV_SetDateTime(TachyRequest):
-    pass
-
-
-class EDM_GetEglIntensity(TachyRequest):
-    pass
-
-
+    
+    
 class EDM_Laserpointer(TachyRequest):
     pass
-
-
+    
+    
+class EDM_SetBumerang(TachyRequest):
+    pass
+    
+    
+class EDM_On(TachyRequest):
+    pass
+    
+    
+class EDM_SetTrkLightSwitch(TachyRequest):
+    pass
+    
+    
+class EDM_SetTrkLightBrightness(TachyRequest):
+    pass
+    
+    
+class EDM_GetTrkLightSwitch(TachyRequest):
+    pass
+    
+    
+class EDM_GetTrkLightBrightness(TachyRequest):
+    pass
+    
+    
+class EDM_GetBumerang(TachyRequest):
+    pass
+    
+    
+class EDM_GetEglIntensity(TachyRequest):
+    pass
+    
+    
 class EDM_SetEglIntensity(TachyRequest):
     pass
-
-
-class SUP_GetConfig(TachyRequest):
-    pass
-
-
-class SUP_SetConfig(TachyRequest):
-    pass
-
-
-class TMC_DoMeasure(TachyRequest):
-    pass
-
-
+    
+    
 class TMC_GetAngle1(TachyRequest):
     pass
-
-
-class TMC_GetAngle5(TachyRequest):
-    pass
-
-
-class TMC_GetAngSwitch(TachyRequest):
-    pass
-
-
-class TMC_GetAtmCorr(TachyRequest):
-    pass
-
-
-class TMC_GetCoordinate(TachyRequest):
-    pass
-
-
-class TMC_GetEdmMode(TachyRequest):
-    pass
-
-
-class TMC_GetFace(TachyRequest):
-    pass
-
-
-class TMC_GetHeight(TachyRequest):
-    gsi_command = "GET/I/WI88"
-
-
-class TMC_GetInclineSwitch(TachyRequest):
-    pass
-
-
-class TMC_GetPrismCorr(TachyRequest):
-    pass
-
-
-class TMC_GetRefractiveCorr(TachyRequest):
-    gsi_command = "GET/I/WI538"
-
-
-class TMC_GetRefractiveMethod(TachyRequest):
-    pass
-
-
-class TMC_GetSignal(TachyRequest):
-    pass
-
-
-class TMC_GetSimpleCoord(TachyRequest):
-    pass
-
-
-class TMC_GetSimpleMea(TachyRequest):
-    pass
-
-
-class TMC_GetSlopeDistCorr(TachyRequest):
-    pass
-
-
-class TMC_GetStation(TachyRequest):
-    pass
-
-
-class TMC_IfDataAzeCorrError(TachyRequest):
-    pass
-
-
-class TMC_IfDataIncCorrError(TachyRequest):
-    pass
-
-
-class TMC_QuickDist(TachyRequest):
-    pass
-
-
-class TMC_SetAngSwitch(TachyRequest):
-    pass
-
-
-class TMC_SetAtmCorr(TachyRequest):
-    pass
-
-
-class TMC_SetEdmMode(TachyRequest):
-    pass
-
-
-class TMC_SetHandDist(TachyRequest):
-    pass
-
-
-class TMC_SetHeight(TachyRequest):
-    pass
-
-
+    
+    
 class TMC_SetInclineSwitch(TachyRequest):
     pass
-
-
-class TMC_SetOrientation(TachyRequest):
+    
+    
+class TMC_GetInclineSwitch(TachyRequest):
     pass
-
-
-class TMC_SetRefractiveCorr(TachyRequest):
+    
+    
+class TMC_DoMeasure(TachyRequest):
     pass
-
-
-class TMC_SetRefractiveMethod(TachyRequest):
+    
+    
+class TMC_GetStation(TachyRequest):
     pass
-
-
+    
+    
 class TMC_SetStation(TachyRequest):
     pass
+    
+    
+class TMC_GetHeight(TachyRequest):
+    gsi_command = "GET/I/WI88"
+    
+    
+class TMC_SetHeight(TachyRequest):
+    pass
+    
+    
+class TMC_GetAngSwitch(TachyRequest):
+    pass
+    
+    
+class TMC_SetAngSwitch(TachyRequest):
+    pass
+    
+    
+class TMC_SetHandDist(TachyRequest):
+    pass
+    
+    
+class TMC_SetEdmMode(TachyRequest):
+    pass
+    
+    
+class TMC_GetEdmMode(TachyRequest):
+    pass
+    
+    
+class TMC_GetSignal(TachyRequest):
+    pass
+    
+    
+class TMC_GetPrismCorr(TachyRequest):
+    pass
+    
+    
+class TMC_SetPrismCorr(TachyRequest):
+    pass
+    
+    
+class TMC_GetFace(TachyRequest):
+    pass
+    
+    
+class TMC_SetAtmCorr(TachyRequest):
+    pass
+    
+    
+class TMC_GetAtmCorr(TachyRequest):
+    pass
+    
+    
+class TMC_SetRefractiveCorr(TachyRequest):
+    pass
+    
+    
+class TMC_GetRefractiveCorr(TachyRequest):
+    gsi_command = "GET/I/WI538"
+    
+    
+class TMC_GetCoordinate1(TachyRequest):
+    pass
+    
+    
+class TMC_SetRefractiveMethod(TachyRequest):
+    pass
+    
+    
+class TMC_GetRefractiveMethod(TachyRequest):
+    pass
+    
+    
+class TMC_GetAngle5(TachyRequest):
+    pass
+    
+    
+class TMC_GetSimpleMea(TachyRequest):
+    pass
+    
+    
+class TMC_SetOrientation(TachyRequest):
+    pass
+    
+    
+class TMC_IfDataAzeCorrError(TachyRequest):
+    pass
+    
+    
+class TMC_IfDataIncCorrError(TachyRequest):
+    pass
+    
+    
+class TMC_GetSimpleCoord(TachyRequest):
+    pass
+    
+    
+class TMC_QuickDist(TachyRequest):
+    pass
+    
+    
+class TMC_GetSlopeDistCorr(TachyRequest):
+    pass
+    
+    
+class CSV_GetInstrumentNo(TachyRequest):
+    pass
+    
+    
+class CSV_GetInstrumentName(TachyRequest):
+    gsi_command = "GET/I/WI13"
+    
+    
+class CSV_SetUserInstrumentName(TachyRequest):
+    pass
+    
+    
+class CSV_GetUserInstrumentName(TachyRequest):
+    pass
+    
+    
+class CSV_SetDateTime(TachyRequest):
+    pass
+    
+    
+class CSV_GetDateTime(TachyRequest):
+    pass
+    
+    
+class CSV_GetVBat(TachyRequest):
+    pass
+    
+    
+class CSV_GetVMem(TachyRequest):
+    pass
+    
+    
+class CSV_GetIntTemp(TachyRequest):
+    pass
+    
+    
+class CSV_GetSWVersion2(TachyRequest):
+    pass
+    
+    
+class CSV_GetDeviceConfig(TachyRequest):
+    pass
+    
+    
+class MOT_StartController(TachyRequest):
+    pass
+    
+    
+class MOT_StopController(TachyRequest):
+    pass
+    
+    
+class MOT_SetVelocity(TachyRequest):
+    pass
+    
+    
+class MOT_ReadLockStatus(TachyRequest):
+    pass
+    
+    
+class WIR_GetRecFormat(TachyRequest):
+    pass
+    
+    
+class WIR_SetRecFormat(TachyRequest):
+    pass
+    
+    
+class AUT_SetTol(TachyRequest):
+    pass
+    
+    
+class AUT_ReadTol(TachyRequest):
+    pass
+    
+    
+class AUT_SetTimeout(TachyRequest):
+    pass
+    
+    
+class AUT_ReadTimeout(TachyRequest):
+    pass
+    
+    
+class AUT_LockIn(TachyRequest):
+    pass
+    
+    
+class AUT_SetATRStatus(TachyRequest):
+    pass
+    
+    
+class AUT_GetATRStatus(TachyRequest):
+    pass
+    
+    
+class AUT_SetLockStatus(TachyRequest):
+    pass
+    
+    
+class AUT_GetLockStatus(TachyRequest):
+    pass
+    
+    
+class AUT_MakePositioning4(TachyRequest):
+    pass
+    
+    
+class AUT_ChangeFace4(TachyRequest):
+    pass
+    
+    
+class AUT_Search2(TachyRequest):
+    pass
+    
+    
+class AUT_GetFineAdjustMode(TachyRequest):
+    pass
+    
+    
+class AUT_SetFineAdjustMode(TachyRequest):
+    pass
+    
+    
+class AUT_FineAdjust3(TachyRequest):
+    pass
+    
+    
+class BMM_BeepOn(TachyRequest):
+    pass
+    
+    
+class BMM_BeepOff(TachyRequest):
+    pass
+    
+    
+class BMM_BeepNormal(TachyRequest):
+    pass
+    
+    
+class BMM_BeepAlarm(TachyRequest):
+    pass
+    
+    
+class CTL_GetUpCounter(TachyRequest):
+    pass
+    
+    
+class SUP_GetConfig(TachyRequest):
+    pass
+    
+    
+class SUP_SetConfig(TachyRequest):
+    pass
+    
+    
+class SUP_SwitchLowTempControl(TachyRequest):
+    pass
+    
+    
+class BAP_GetLastDisplayedError(TachyRequest):
+    pass
+    
+    
+class BAP_MeasDistanceAngle(TachyRequest):
+    pass
+    
 
 ALL_COMMANDS = [
-    BMM_BeepAlarm,
-    BMM_BeepNormal,
-    COM_GetDoublePrecision,
-    COM_GetSWVersion,
     COM_NullProc,
+    COM_Local,
     COM_SetDoublePrecision,
-    COM_SwitchOffTPS,
+    COM_GetDoublePrecision,
+    COM_SetSendDelay,
+    COM_GetSWVersion,
     COM_SwitchOnTPS,
-    CSV_GetDateTime,
-    CSV_GetDeviceConfig,
-    CSV_GetInstrumentName,
-    CSV_GetInstrumentNo,
-    CSV_GetIntTemp,
-    CSV_GetSWVersion,
-    CSV_SetDateTime,
-    EDM_GetEglIntensity,
+    COM_SwitchOffTPS,
+    COM_GetBinaryAvailable,
+    COM_SetBinaryAvailable,
+    COM_EnableSignOff,
     EDM_Laserpointer,
+    EDM_SetBumerang,
+    EDM_On,
+    EDM_SetTrkLightSwitch,
+    EDM_SetTrkLightBrightness,
+    EDM_GetTrkLightSwitch,
+    EDM_GetTrkLightBrightness,
+    EDM_GetBumerang,
+    EDM_GetEglIntensity,
     EDM_SetEglIntensity,
-    SUP_GetConfig,
-    SUP_SetConfig,
-    TMC_DoMeasure,
     TMC_GetAngle1,
-    TMC_GetAngle5,
-    TMC_GetAngSwitch,
-    TMC_GetAtmCorr,
-    TMC_GetCoordinate,
-    TMC_GetEdmMode,
-    TMC_GetFace,
-    TMC_GetHeight,
+    TMC_SetInclineSwitch,
     TMC_GetInclineSwitch,
-    TMC_GetPrismCorr,
-    TMC_GetRefractiveCorr,
-    TMC_GetRefractiveMethod,
-    TMC_GetSignal,
-    TMC_GetSimpleCoord,
-    TMC_GetSimpleMea,
-    TMC_GetSlopeDistCorr,
+    TMC_DoMeasure,
     TMC_GetStation,
+    TMC_SetStation,
+    TMC_GetHeight,
+    TMC_SetHeight,
+    TMC_GetAngSwitch,
+    TMC_SetAngSwitch,
+    TMC_SetHandDist,
+    TMC_SetEdmMode,
+    TMC_GetEdmMode,
+    TMC_GetSignal,
+    TMC_GetPrismCorr,
+    TMC_SetPrismCorr,
+    TMC_GetFace,
+    TMC_SetAtmCorr,
+    TMC_GetAtmCorr,
+    TMC_SetRefractiveCorr,
+    TMC_GetRefractiveCorr,
+    TMC_GetCoordinate1,
+    TMC_SetRefractiveMethod,
+    TMC_GetRefractiveMethod,
+    TMC_GetAngle5,
+    TMC_GetSimpleMea,
+    TMC_SetOrientation,
     TMC_IfDataAzeCorrError,
     TMC_IfDataIncCorrError,
+    TMC_GetSimpleCoord,
     TMC_QuickDist,
-    TMC_SetAngSwitch,
-    TMC_SetAtmCorr,
-    TMC_SetEdmMode,
-    TMC_SetHandDist,
-    TMC_SetHeight,
-    TMC_SetInclineSwitch,
-    TMC_SetOrientation,
-    TMC_SetRefractiveCorr,
-    TMC_SetRefractiveMethod,
-    TMC_SetStation]
+    TMC_GetSlopeDistCorr,
+    CSV_GetInstrumentNo,
+    CSV_GetInstrumentName,
+    CSV_SetUserInstrumentName,
+    CSV_GetUserInstrumentName,
+    CSV_SetDateTime,
+    CSV_GetDateTime,
+    CSV_GetVBat,
+    CSV_GetVMem,
+    CSV_GetIntTemp,
+    CSV_GetSWVersion2,
+    CSV_GetDeviceConfig,
+    MOT_StartController,
+    MOT_StopController,
+    MOT_SetVelocity,
+    MOT_ReadLockStatus,
+    WIR_GetRecFormat,
+    WIR_SetRecFormat,
+    AUT_SetTol,
+    AUT_ReadTol,
+    AUT_SetTimeout,
+    AUT_ReadTimeout,
+    AUT_LockIn,
+    AUT_SetATRStatus,
+    AUT_GetATRStatus,
+    AUT_SetLockStatus,
+    AUT_GetLockStatus,
+    AUT_MakePositioning4,
+    AUT_ChangeFace4,
+    AUT_Search2,
+    AUT_GetFineAdjustMode,
+    AUT_SetFineAdjustMode,
+    AUT_FineAdjust3,
+    BMM_BeepOn,
+    BMM_BeepOff,
+    BMM_BeepNormal,
+    BMM_BeepAlarm,
+    CTL_GetUpCounter,
+    SUP_GetConfig,
+    SUP_SetConfig,
+    SUP_SwitchLowTempControl,
+    BAP_GetLastDisplayedError,
+    BAP_MeasDistanceAngle]
     
 if __name__=="__main__":
     set_station = TMC_SetStation()

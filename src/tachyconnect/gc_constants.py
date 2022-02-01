@@ -1,206 +1,232 @@
-GRC_OK = 0                             # Function successfully completed.
-GRC_UNDEFINED = 1                      # Unknown error, result unspecified.
-GRC_IVPARAM = 2                        # Invalid parameter detected. Result unspecified.
-GRC_IVRESULT = 3                       # Invalid result.
-GRC_FATAL = 4                          # Fatal error.
-GRC_NOT_IMPL = 5                       # Not implemented yet.
-GRC_TIME_OUT = 6                       # Function execution timed out. Result unspecified.
-GRC_SET_INCOMPL = 7                    # Parameter setup for subsystem is incomplete.
-GRC_ABORT = 8                          # Function execution has been aborted.
-GRC_NOMEMORY = 9                       # Fatal error - not enough memory.
-GRC_NOTINIT = 10                       # Fatal error - subsystem not initialized.
-GRC_SHUT_DOWN = 12                     # Subsystem is down.
-GRC_SYSBUSY = 13                       # System busy/already in use of another process. Cannot execute function.
-GRC_HWFAILURE = 14                     # Fatal error - hardware failure.
-GRC_ABORT_APPL = 15                    # Execution of application has been aborted (SHIFT-ESC).
-GRC_LOW_POWER = 16                     # Operation aborted - insufficient power supply level.
-GRC_IVVERSION = 17                     # Invalid version of file, ...
-GRC_BATT_EMPTY = 18                    # Battery empty
-GRC_NO_EVENT = 20                      # no event pending.
-GRC_OUT_OF_TEMP = 21                   # out of temperature range
-GRC_INSTRUMENT_TILT = 22               # instrument tilting out of range
-GRC_COM_SETTING = 23                   # communication error
-GRC_NO_ACTION = 24                     # GRC_TYPE Input 'do no action'
-GRC_SLEEP_MODE = 25                    # Instr. run into the sleep mode
-GRC_NOTOK = 26                         # Function not successfully completed.
-GRC_NA = 27                            # Not available
-GRC_OVERFLOW = 28                      # Overflow error
-GRC_STOPPED = 29                       # System or subsystem has been stopped
-GRC_ANG_ERROR = 257                    # Angles and Inclinations not valid
-GRC_ANG_INCL_ERROR = 258               # inclinations not valid
-GRC_ANG_BAD_ACC = 259                  # value accuracies not reached
-GRC_ANG_BAD_ANGLE_ACC = 260            # angle-accuracies not reached
-GRC_ANG_BAD_INCLIN_ACC = 261           # inclination accuracies not reached
-GRC_ANG_WRITE_PROTECTED = 266          # no write access allowed
-GRC_ANG_OUT_OF_RANGE = 267             # value out of range
-GRC_ANG_IR_OCCURED = 268               # function aborted due to interrupt
-GRC_ANG_HZ_MOVED = 269                 # hz moved during incline measurement
-GRC_ANG_OS_ERROR = 270                 # troubles with operation system
-GRC_ANG_DATA_ERROR = 271               # overflow at parameter values
-GRC_ANG_PEAK_CNT_UFL = 272             # too less peaks
-GRC_ANG_TIME_OUT = 273                 # reading timeout
-GRC_ANG_TOO_MANY_EXPOS = 274           # too many exposures wanted
-GRC_ANG_PIX_CTRL_ERR = 275             # picture height out of range
-GRC_ANG_MAX_POS_SKIP = 276             # positive exposure dynamic overflow
-GRC_ANG_MAX_NEG_SKIP = 277             # negative exposure dynamic overflow
-GRC_ANG_EXP_LIMIT = 278                # exposure time overflow
-GRC_ANG_UNDER_EXPOSURE = 279           # picture underexposured
-GRC_ANG_OVER_EXPOSURE = 280            # picture overexposured
-GRC_ANG_TMANY_PEAKS = 300              # too many peaks detected
-GRC_ANG_TLESS_PEAKS = 301              # too less peaks detected
-GRC_ANG_PEAK_TOO_SLIM = 302            # peak too slim
-GRC_ANG_PEAK_TOO_WIDE = 303            # peak to wide
-GRC_ANG_BAD_PEAKDIFF = 304             # bad peak difference
-GRC_ANG_UNDER_EXP_PICT = 305           # too less peak amplitude
-GRC_ANG_PEAKS_INHOMOGEN = 306          # inhomogeneous peak amplitudes
-GRC_ANG_NO_DECOD_POSS = 307            # no peak decoding possible
-GRC_ANG_UNSTABLE_DECOD = 308           # peak decoding not stable
-GRC_ANG_TLESS_FPEAKS = 309             # too less valid finepeaks
-GRC_ATA_NOT_READY = 512                # ATR-System is not ready.
-GRC_ATA_NO_RESULT = 513                # Result isn't available yet.
-GRC_ATA_SEVERAL_TARGETS = 514          # Several Targets detected.
-GRC_ATA_BIG_SPOT = 515                 # Spot is too big for analyse.
-GRC_ATA_BACKGROUND = 516               # Background is too bright.
-GRC_ATA_NO_TARGETS = 517               # No targets detected.
-GRC_ATA_NOT_ACCURAT = 518              # Accuracy worse than asked for.
-GRC_ATA_SPOT_ON_EDGE = 519             # Spot is on the edge of the sensing area.
-GRC_ATA_BLOOMING = 522                 # Blooming or spot on edge detected.
-GRC_ATA_NOT_BUSY = 523                 # ATR isn't in a continuous mode.
-GRC_ATA_STRANGE_LIGHT = 524            # Not the spot of the own target illuminator.
-GRC_ATA_V24_FAIL = 525                 # Communication error to sensor (ATR).
-GRC_ATA_DECODE_ERROR = 526             # Received Arguments cannot be decoded
-GRC_ATA_HZ_FAIL = 527                  # No Spot detected in Hz-direction.
-GRC_ATA_V_FAIL = 528                   # No Spot detected in V-direction.
-GRC_ATA_HZ_STRANGE_L = 529             # Strange light in Hz-direction.
-GRC_ATA_V_STRANGE_L = 530              # Strange light in V-direction.
-GRC_ATA_SLDR_TRANSFER_PENDING = 531    # On multiple ATA_SLDR_OpenTransfer.
-GRC_ATA_SLDR_TRANSFER_ILLEGAL = 532    # No ATA_SLDR_OpenTransfer happened.
-GRC_ATA_SLDR_DATA_ERROR = 533          # Unexpected data format received.
-GRC_ATA_SLDR_CHK_SUM_ERROR = 534       # Checksum error in transmitted data.
-GRC_ATA_SLDR_ADDRESS_ERROR = 535       # Address out of valid range.
-GRC_ATA_SLDR_INV_LOADFILE = 536        # Firmware file has invalid format.
-GRC_ATA_SLDR_UNSUPPORTED = 537         # Current (loaded) firmware doesn't support upload.
-GRC_ATA_PS_NOT_READY = 538             # PS-System is not ready.
-GRC_ATA_ATR_SYSTEM_ERR = 539           # ATR system error
-GRC_EDM_SYSTEM_ERR = 769               # Fatal EDM sensor error. See for the exact reason the original EDM sensor error number. In the most cases a service problem.
-GRC_EDM_INVALID_COMMAND = 770          # Invalid command or unknown command, see command syntax.
-GRC_EDM_BOOM_ERR = 771                 # Boomerang error.
-GRC_EDM_SIGN_LOW_ERR = 772             # Received signal to low, prism to far away, or natural barrier, bad environment, etc.
-GRC_EDM_DIL_ERR = 773                  # obsolete
-GRC_EDM_SIGN_HIGH_ERR = 774            # Received signal to strong, prism to near, stranger light effect.
-GRC_EDM_TIMEOUT = 775                  # Timeout, measuring time exceeded (signal too weak, beam interrupted,..)
-GRC_EDM_FLUKT_ERR = 776                # to much turbulences or distractions
-GRC_EDM_FMOT_ERR = 777                 # filter motor defective
-GRC_EDM_DEV_NOT_INSTALLED = 778        # Device like EGL, DL is not installed.
-GRC_EDM_NOT_FOUND = 779                # Search result invalid. For the exact explanation, see in the description of the called function.
-GRC_EDM_ERROR_RECEIVED = 780           # Communication ok, but an error reported from the EDM sensor.
-GRC_EDM_MISSING_SRVPWD = 781           # No service password is set.
-GRC_EDM_INVALID_ANSWER = 782           # Communication ok, but an unexpected answer received.
-GRC_EDM_SEND_ERR = 783                 # Data send error, sending buffer is full.
-GRC_EDM_RECEIVE_ERR = 784              # Data receive error, like parity buffer overflow.
-GRC_EDM_INTERNAL_ERR = 785             # Internal EDM subsystem error.
-GRC_EDM_BUSY = 786                     # Sensor is working already, abort current measuring first.
-GRC_EDM_NO_MEASACTIVITY = 787          # No measurement activity started.
-GRC_EDM_CHKSUM_ERR = 788               # Calculated checksum, resp. received data wrong (only in binary communication mode possible).
-GRC_EDM_INIT_OR_STOP_ERR = 789         # During start up or shut down phase an error occured. It is saved in the DEL buffer.
-GRC_EDM_SRL_NOT_AVAILABLE = 790        # Red laser not available on this sensor HW.
-GRC_EDM_MEAS_ABORTED = 791             # Measurement will be aborted (will be used for the laser security)
-GRC_EDM_SLDR_TRANSFER_PENDING = 798    # Multiple OpenTransfer calls.
-GRC_EDM_SLDR_TRANSFER_ILLEGAL = 799    # No open transfer happened.
-GRC_EDM_SLDR_DATA_ERROR = 800          # Unexpected data format received.
-GRC_EDM_SLDR_CHK_SUM_ERROR = 801       # Checksum error in transmitted data.
-GRC_EDM_SLDR_ADDR_ERROR = 802          # Address out of valid range.
-GRC_EDM_SLDR_INV_LOADFILE = 803        # Firmware file has invalid format.
-GRC_EDM_SLDR_UNSUPPORTED = 804         # Current (loaded) firmware doesn't support upload.
-GRC_EDM_UNKNOW_ERR = 808               # Undocumented error from the EDM sensor, should not occur.
-GRC_EDM_DISTRANGE_ERR = 818            # Out of distance range (dist too small or large)
-GRC_EDM_SIGNTONOISE_ERR = 819          # Signal to noise ratio too small
-GRC_EDM_NOISEHIGH_ERR = 820            # Noise to high
-GRC_EDM_PWD_NOTSET = 821               # Password is not set
-GRC_EDM_ACTION_NO_MORE_VALID = 822     # Elapsed time between prepare und start fast measurement for ATR to long
-GRC_EDM_MULTRG_ERR = 823               # Possibly more than one target (also a sensor error)
-GRC_TMC_NO_FULL_CORRECTION = 1283      # Warning: measurement without full correction
-GRC_TMC_ACCURACY_GUARANTEE = 1284      # Info: accuracy can not be guarantee
-GRC_TMC_ANGLE_OK = 1285                # Warning: only angle measurement valid
-GRC_TMC_ANGLE_NOT_FULL_CORR = 1288     # Warning: only angle measurement valid but without full correction
-GRC_TMC_ANGLE_NO_ACC_GUARANTY = 1289   # Info: only angle measurement valid but accuracy can not be guarantee
-GRC_TMC_ANGLE_ERROR = 1290             # Error: no angle measurement
-GRC_TMC_DIST_PPM = 1291                # Error: wrong setting of PPM or MM on EDM
-GRC_TMC_DIST_ERROR = 1292              # Error: distance measurement not done (no aim, etc.)
-GRC_TMC_BUSY = 1293                    # Error: system is busy (no measurement done)
-GRC_TMC_SIGNAL_ERROR = 1294            # Error: no signal on EDM (only in signal mode)
-GRC_BMM_XFER_PENDING = 2305            # Loading process already opened
-GRC_BMM_NO_XFER_OPEN = 2306            # Transfer not opened
-GRC_BMM_UNKNOWN_CHARSET = 2307         # Unknown character set
-GRC_BMM_NOT_INSTALLED = 2308           # Display module not present
-GRC_BMM_ALREADY_EXIST = 2309           # Character set already exists
-GRC_BMM_CANT_DELETE = 2310             # Character set cannot be deleted
-GRC_BMM_MEM_ERROR = 2311               # Memory cannot be allocated
-GRC_BMM_CHARSET_USED = 2312            # Character set still used
-GRC_BMM_CHARSET_SAVED = 2313           # Charset cannot be deleted or is protected
-GRC_BMM_INVALID_ADR = 2314             # Attempt to copy a character block outside the allocated memory
-GRC_BMM_CANCELANDADR_ERROR = 2315      # Error during release of allocated memory
-GRC_BMM_INVALID_SIZE = 2316            # Number of bytes specified in header does not match the bytes read
-GRC_BMM_CANCELANDINVSIZE_ERROR = 2317  # Allocated memory could not be released
-GRC_BMM_ALL_GROUP_OCC = 2318           # Max. number of character sets already loaded
-GRC_BMM_CANT_DEL_LAYERS = 2319         # Layer cannot be deleted
-GRC_BMM_UNKNOWN_LAYER = 2320           # Required layer does not exist
-GRC_BMM_INVALID_LAYERLEN = 2321        # Layer length exceeds maximum
-GRC_COM_ERO = 3072                     # Initiate Extended Runtime Operation (ERO).
-GRC_COM_CANT_ENCODE = 3073             # Cannot encode arguments in client.
-GRC_COM_CANT_DECODE = 3074             # Cannot decode results in client.
-GRC_COM_CANT_SEND = 3075               # Hardware error while sending.
-GRC_COM_CANT_RECV = 3076               # Hardware error while receiving.
-GRC_COM_TIMEDOUT = 3077                # Request timed out.
-GRC_COM_WRONG_FORMAT = 3078            # Packet format error.
-GRC_COM_VER_MISMATCH = 3079            # Version mismatch between client and server.
-GRC_COM_CANT_DECODE_REQ = 3080         # Cannot decode arguments in server.
-GRC_COM_PROC_UNAVAIL = 3081            # Unknown RPC, procedure ID invalid.
-GRC_COM_CANT_ENCODE_REP = 3082         # Cannot encode results in server.
-GRC_COM_SYSTEM_ERR = 3083              # Unspecified generic system error.
-GRC_COM_FAILED = 3085                  # Unspecified error.
-GRC_COM_NO_BINARY = 3086               # Binary protocol not available.
-GRC_COM_INTR = 3087                    # Call interrupted.
-GRC_COM_REQUIRES_8DBITS = 3090         # Protocol needs 8bit encoded characters.
-GRC_COM_TR_ID_MISMATCH = 3093          # TRANSACTIONS ID mismatch error.
-GRC_COM_NOT_GEOCOM = 3094              # Protocol not recognizable.
-GRC_COM_UNKNOWN_PORT = 3095            # (WIN) Invalid port address.
-GRC_COM_ERO_END = 3099                 # ERO is terminating.
-GRC_COM_OVERRUN = 3100                 # Internal error: data buffer overflow.
-GRC_COM_SRVR_RX_CHECKSUM_ERRR = 3101   # Invalid checksum on server side received.
-GRC_COM_CLNT_RX_CHECKSUM_ERRR = 3102   # Invalid checksum on client side received.
-GRC_COM_PORT_NOT_AVAILABLE = 3103      # (WIN) Port not available.
-GRC_COM_PORT_NOT_OPEN = 3104           # (WIN) Port not opened.
-GRC_COM_NO_PARTNER = 3105              # (WIN) Unable to find TPS.
-GRC_COM_ERO_NOT_STARTED = 3106         # Extended Runtime Operation could not be started.
-GRC_COM_CONS_REQ = 3107                # Att to send cons reqs
-GRC_COM_SRVR_IS_SLEEPING = 3108        # TPS has gone to sleep. Wait and try again.
-GRC_COM_SRVR_IS_OFF = 3109             # TPS has shut down. Wait and try again.
-GRC_AUT_TIMEOUT = 8704                 # Position not reached
-GRC_AUT_DETENT_ERROR = 8705            # Positioning not possible due to mounted EDM
-GRC_AUT_ANGLE_ERROR = 8706             # Angle measurement error
-GRC_AUT_MOTOR_ERROR = 8707             # Motorisation error
-GRC_AUT_INCACC = 8708                  # Position not exactly reached
-GRC_AUT_DEV_ERROR = 8709               # Deviation measurement error
-GRC_AUT_NO_TARGET = 8710               # No target detected
-GRC_AUT_MULTIPLE_TARGETS = 8711        # Multiple target detected
-GRC_AUT_BAD_ENVIRONMENT = 8712         # Bad environment conditions
-GRC_AUT_DETECTOR_ERROR = 8713          # Error in target acquisition
-GRC_AUT_NOT_ENABLED = 8714             # Target acquisition not enabled
-GRC_AUT_CALACC = 8715                  # ATR-Calibration failed
-GRC_AUT_ACCURACY = 8716                # Target position not exactly reached
-GRC_AUT_DIST_STARTED = 8717            # Info: dist. measurement has been started
-GRC_AUT_SUPPLY_TOO_HIGH = 8718         # external Supply voltage is too high
-GRC_AUT_SUPPLY_TOO_LOW = 8719          # int. or ext. Supply voltage is too low
-GRC_AUT_NO_WORKING_AREA = 8720         # working area not set
-GRC_AUT_ARRAY_FULL = 8721              # power search data array is filled
-GRC_AUT_NO_DATA = 8722                 # no data available
-GRC_KDM_NOT_AVAILABLE = 12544          # KDM device is not available.
-GRC_FTR_FILEACCESS = 13056             # File access error
-GRC_FTR_WRONGFILEBLOCKNUMBER = 13057   # block number was not the expected one
-GRC_FTR_NOTENOUGHSPACE = 13058         # not enough space on device to proceed uploading
-GRC_FTR_INVALIDINPUT = 13059           # Rename of file failed.
-GRC_FTR_MISSINGSETUP = 13060           # invalid parameter as input
+GRC_OK = 0                               # Function successfully completed.
+GRC_UNDEFINED = 1                        # Unknown error, result unspecified.
+GRC_IVPARAM = 2                          # Invalid parameter detected. Result unspecified.
+GRC_IVRESULT = 3                         # Invalid result.
+GRC_FATAL = 4                            # Fatal error.
+GRC_NOT_IMPL = 5                         # Not implemented yet.
+GRC_TIME_OUT = 6                         # Function execution timed out. Result unspecified.
+GRC_SET_INCOMPL = 7                      # Parameter setup for subsystem is incomplete.
+GRC_ABORT = 8                            # Function execution has been aborted.
+GRC_NOMEMORY = 9                         # Fatal error - not enough memory.
+GRC_NOTINIT = 10                         # Fatal error - subsystem not initialized.
+GRC_SHUT_DOWN = 12                       # Subsystem is down.
+GRC_SYSBUSY = 13                         # System busy/already in use of another process. Cannot execute function.
+GRC_HWFAILURE = 14                       # Fatal error - hardware failure.
+GRC_ABORT_APPL = 15                      # Execution of application has been aborted (SHIFT-ESC).
+GRC_LOW_POWER = 16                       # Operation aborted - insufficient power supply level.
+GRC_IVVERSION = 17                       # Invalid version of file, ...
+GRC_BATT_EMPTY = 18                      # Battery empty
+GRC_NO_EVENT = 20                        # no event pending.
+GRC_OUT_OF_TEMP = 21                     # out of temperature range
+GRC_INSTRUMENT_TILT = 22                 # instrument tilting out of range
+GRC_COM_SETTING = 23                     # communication error
+GRC_NO_ACTION = 24                       # GRC_TYPE Input 'do no action'
+GRC_SLEEP_MODE = 25                      # Instr. run into the sleep mode
+GRC_NOTOK = 26                           # Function not successfully completed.
+GRC_NA = 27                              # Not available
+GRC_OVERFLOW = 28                        # Overflow error
+GRC_STOPPED = 29                         # System or subsystem has been stopped
+GRC_ANG_ERROR = 257                      # Angles and Inclinations not valid
+GRC_ANG_INCL_ERROR = 258                 # inclinations not valid
+GRC_ANG_BAD_ACC = 259                    # value accuracies not reached
+GRC_ANG_BAD_ANGLE_ACC = 260              # angle-accuracies not reached
+GRC_ANG_BAD_INCLIN_ACC = 261             # inclination accuracies not reached
+GRC_ANG_WRITE_PROTECTED = 266            # no write access allowed
+GRC_ANG_OUT_OF_RANGE = 267               # value out of range
+GRC_ANG_IR_OCCURED = 268                 # function aborted due to interrupt
+GRC_ANG_HZ_MOVED = 269                   # hz moved during incline measurement
+GRC_ANG_OS_ERROR = 270                   # troubles with operation system
+GRC_ANG_DATA_ERROR = 271                 # overflow at parameter values
+GRC_ANG_PEAK_CNT_UFL = 272               # too less peaks
+GRC_ANG_TIME_OUT = 273                   # reading timeout
+GRC_ANG_TOO_MANY_EXPOS = 274             # too many exposures wanted
+GRC_ANG_PIX_CTRL_ERR = 275               # picture height out of range
+GRC_ANG_MAX_POS_SKIP = 276               # positive exposure dynamic overflow
+GRC_ANG_MAX_NEG_SKIP = 277               # negative exposure dynamic overflow
+GRC_ANG_EXP_LIMIT = 278                  # exposure time overflow
+GRC_ANG_UNDER_EXPOSURE = 279             # picture underexposured
+GRC_ANG_OVER_EXPOSURE = 280              # picture overexposured
+GRC_ANG_TMANY_PEAKS = 300                # too many peaks detected
+GRC_ANG_TLESS_PEAKS = 301                # too less peaks detected
+GRC_ANG_PEAK_TOO_SLIM = 302              # peak too slim
+GRC_ANG_PEAK_TOO_WIDE = 303              # peak to wide
+GRC_ANG_BAD_PEAKDIFF = 304               # bad peak difference
+GRC_ANG_UNDER_EXP_PICT = 305             # too less peak amplitude
+GRC_ANG_PEAKS_INHOMOGEN = 306            # inhomogeneous peak amplitudes
+GRC_ANG_NO_DECOD_POSS = 307              # no peak decoding possible
+GRC_ANG_UNSTABLE_DECOD = 308             # peak decoding not stable
+GRC_ANG_TLESS_FPEAKS = 309               # too less valid finepeaks
+GRC_ATA_NOT_READY = 512                  # ATR-System is not ready.
+GRC_ATA_NO_RESULT = 513                  # Result isn't available yet.
+GRC_ATA_SEVERAL_TARGETS = 514            # Several Targets detected.
+GRC_ATA_BIG_SPOT = 515                   # Spot is too big for analyse.
+GRC_ATA_BACKGROUND = 516                 # Background is too bright.
+GRC_ATA_NO_TARGETS = 517                 # No targets detected.
+GRC_ATA_NOT_ACCURAT = 518                # Accuracy worse than asked for.
+GRC_ATA_SPOT_ON_EDGE = 519               # Spot is on the edge of the sensing area.
+GRC_ATA_BLOOMING = 522                   # Blooming or spot on edge detected.
+GRC_ATA_NOT_BUSY = 523                   # ATR isn't in a continuous mode.
+GRC_ATA_STRANGE_LIGHT = 524              # Not the spot of the own target illuminator.
+GRC_ATA_V24_FAIL = 525                   # Communication error to sensor (ATR).
+GRC_ATA_DECODE_ERROR = 526               # Received Arguments cannot be decoded
+GRC_ATA_HZ_FAIL = 527                    # No Spot detected in Hz-direction.
+GRC_ATA_V_FAIL = 528                     # No Spot detected in V-direction.
+GRC_ATA_HZ_STRANGE_L = 529               # Strange light in Hz-direction.
+GRC_ATA_V_STRANGE_L = 530                # Strange light in V-direction.
+GRC_ATA_SLDR_TRANSFER_PENDING = 531      # On multiple ATA_SLDR_OpenTransfer.
+GRC_ATA_SLDR_TRANSFER_ILLEGAL = 532      # No ATA_SLDR_OpenTransfer happened.
+GRC_ATA_SLDR_DATA_ERROR = 533            # Unexpected data format received.
+GRC_ATA_SLDR_CHK_SUM_ERROR = 534         # Checksum error in transmitted data.
+GRC_ATA_SLDR_ADDRESS_ERROR = 535         # Address out of valid range.
+GRC_ATA_SLDR_INV_LOADFILE = 536          # Firmware file has invalid format.
+GRC_ATA_SLDR_UNSUPPORTED = 537           # Current (loaded) firmware doesn't support upload.
+GRC_ATA_PS_NOT_READY = 538               # PS-System is not ready.
+GRC_ATA_ATR_SYSTEM_ERR = 539             # ATR system error
+GRC_EDM_SYSTEM_ERR = 769                 # Fatal EDM sensor error. See for the exact reason the original EDM sensor error number. In the most cases a service problem.
+GRC_EDM_INVALID_COMMAND = 770            # Invalid command or unknown command, see command syntax.
+GRC_EDM_BOOM_ERR = 771                   # Boomerang error.
+GRC_EDM_SIGN_LOW_ERR = 772               # Received signal to low, prism to far away, or natural barrier, bad environment, etc.
+GRC_EDM_DIL_ERR = 773                    # obsolete
+GRC_EDM_SIGN_HIGH_ERR = 774              # Received signal to strong, prism to near, stranger light effect.
+GRC_EDM_TIMEOUT = 775                    # Timeout, measuring time exceeded (signal too weak, beam interrupted,..)
+GRC_EDM_FLUKT_ERR = 776                  # to much turbulences or distractions
+GRC_EDM_FMOT_ERR = 777                   # filter motor defective
+GRC_EDM_DEV_NOT_INSTALLED = 778          # Device like EGL, DL is not installed.
+GRC_EDM_NOT_FOUND = 779                  # Search result invalid. For the exact explanation, see in the description of the called function.
+GRC_EDM_ERROR_RECEIVED = 780             # Communication ok, but an error reported from the EDM sensor.
+GRC_EDM_MISSING_SRVPWD = 781             # No service password is set.
+GRC_EDM_INVALID_ANSWER = 782             # Communication ok, but an unexpected answer received.
+GRC_EDM_SEND_ERR = 783                   # Data send error, sending buffer is full.
+GRC_EDM_RECEIVE_ERR = 784                # Data receive error, like parity buffer overflow.
+GRC_EDM_INTERNAL_ERR = 785               # Internal EDM subsystem error.
+GRC_EDM_BUSY = 786                       # Sensor is working already, abort current measuring first.
+GRC_EDM_NO_MEASACTIVITY = 787            # No measurement activity started.
+GRC_EDM_CHKSUM_ERR = 788                 # Calculated checksum, resp. received data wrong (only in binary communication mode possible).
+GRC_EDM_INIT_OR_STOP_ERR = 789           # During start up or shut down phase an error occured. It is saved in the DEL buffer.
+GRC_EDM_SRL_NOT_AVAILABLE = 790          # Red laser not available on this sensor HW.
+GRC_EDM_MEAS_ABORTED = 791               # Measurement will be aborted (will be used for the laser security)
+GRC_EDM_SLDR_TRANSFER_PENDING = 798      # Multiple OpenTransfer calls.
+GRC_EDM_SLDR_TRANSFER_ILLEGAL = 799      # No open transfer happened.
+GRC_EDM_SLDR_DATA_ERROR = 800            # Unexpected data format received.
+GRC_EDM_SLDR_CHK_SUM_ERROR = 801         # Checksum error in transmitted data.
+GRC_EDM_SLDR_ADDR_ERROR = 802            # Address out of valid range.
+GRC_EDM_SLDR_INV_LOADFILE = 803          # Firmware file has invalid format.
+GRC_EDM_SLDR_UNSUPPORTED = 804           # Current (loaded) firmware doesn't support upload.
+GRC_EDM_UNKNOW_ERR = 808                 # Undocumented error from the EDM sensor, should not occur.
+GRC_EDM_DISTRANGE_ERR = 818              # Out of distance range (dist too small or large)
+GRC_EDM_SIGNTONOISE_ERR = 819            # Signal to noise ratio too small
+GRC_EDM_NOISEHIGH_ERR = 820              # Noise to high
+GRC_EDM_PWD_NOTSET = 821                 # Password is not set
+GRC_EDM_ACTION_NO_MORE_VALID = 822       # Elapsed time between prepare und start fast measurement for ATR to long
+GRC_EDM_MULTRG_ERR = 823                 # Possibly more than one target (also a sensor error)
+GRC_TMC_NO_FULL_CORRECTION = 1283        # Warning: measurement without full correction
+GRC_TMC_ACCURACY_GUARANTEE = 1284        # Info: accuracy can not be guarantee
+GRC_TMC_ANGLE_OK = 1285                  # Warning: only angle measurement valid
+GRC_TMC_ANGLE_NOT_FULL_CORR = 1288       # Warning: only angle measurement valid but without full correction
+GRC_TMC_ANGLE_NO_ACC_GUARANTY = 1289     # Info: only angle measurement valid but accuracy can not be guarantee
+GRC_TMC_ANGLE_ERROR = 1290               # Error: no angle measurement
+GRC_TMC_DIST_PPM = 1291                  # Error: wrong setting of PPM or MM on EDM
+GRC_TMC_DIST_ERROR = 1292                # Error: distance measurement not done (no aim, etc.)
+GRC_TMC_BUSY = 1293                      # Error: system is busy (no measurement done)
+GRC_TMC_SIGNAL_ERROR = 1294              # Error: no signal on EDM (only in signal mode)
+MOT_RC_UNREADY = 1792                    # Motorization not ready
+MOT_RC_BUSY = 1793                       # Motorization is handling another task
+MOT_RC_NOT_OCONST = 1794                 # Not in velocity mode
+MOT_RC_NOT_CONFIG = 1795                 # Motorization is in the wrong mode or busy
+MOT_RC_NOT_POSIT = 1796                  # Not in posit mode
+MOT_RC_NOT_SERVICE = 1797                # Not in service mode
+MOT_RC_NOT_BUSY = 1798                   # Motorization is handling no task
+MOT_RC_NOT_LOCK = 1799                   # Not in tracking mode
+GRC_BMM_XFER_PENDING = 2305              # Loading process already opened
+GRC_BMM_NO_XFER_OPEN = 2306              # Transfer not opened
+GRC_BMM_UNKNOWN_CHARSET = 2307           # Unknown character set
+GRC_BMM_NOT_INSTALLED = 2308             # Display module not present
+GRC_BMM_ALREADY_EXIST = 2309             # Character set already exists
+GRC_BMM_CANT_DELETE = 2310               # Character set cannot be deleted
+GRC_BMM_MEM_ERROR = 2311                 # Memory cannot be allocated
+GRC_BMM_CHARSET_USED = 2312              # Character set still used
+GRC_BMM_CHARSET_SAVED = 2313             # Charset cannot be deleted or is protected
+GRC_BMM_INVALID_ADR = 2314               # Attempt to copy a character block outside the allocated memory
+GRC_BMM_CANCELANDADR_ERROR = 2315        # Error during release of allocated memory
+GRC_BMM_INVALID_SIZE = 2316              # Number of bytes specified in header does not match the bytes read
+GRC_BMM_CANCELANDINVSIZE_ERROR = 2317    # Allocated memory could not be released
+GRC_BMM_ALL_GROUP_OCC = 2318             # Max. number of character sets already loaded
+GRC_BMM_CANT_DEL_LAYERS = 2319           # Layer cannot be deleted
+GRC_BMM_UNKNOWN_LAYER = 2320             # Required layer does not exist
+GRC_BMM_INVALID_LAYERLEN = 2321          # Layer length exceeds maximum
+GRC_COM_ERO = 3072                       # Initiate Extended Runtime Operation (ERO).
+GRC_COM_CANT_ENCODE = 3073               # Cannot encode arguments in client.
+GRC_COM_CANT_DECODE = 3074               # Cannot decode results in client.
+GRC_COM_CANT_SEND = 3075                 # Hardware error while sending.
+GRC_COM_CANT_RECV = 3076                 # Hardware error while receiving.
+GRC_COM_TIMEDOUT = 3077                  # Request timed out.
+GRC_COM_WRONG_FORMAT = 3078              # Packet format error.
+GRC_COM_VER_MISMATCH = 3079              # Version mismatch between client and server.
+GRC_COM_CANT_DECODE_REQ = 3080           # Cannot decode arguments in server.
+GRC_COM_PROC_UNAVAIL = 3081              # Unknown RPC, procedure ID invalid.
+GRC_COM_CANT_ENCODE_REP = 3082           # Cannot encode results in server.
+GRC_COM_SYSTEM_ERR = 3083                # Unspecified generic system error.
+GRC_COM_FAILED = 3085                    # Unspecified error.
+GRC_COM_NO_BINARY = 3086                 # Binary protocol not available.
+GRC_COM_INTR = 3087                      # Call interrupted.
+GRC_COM_REQUIRES_8DBITS = 3090           # Protocol needs 8bit encoded characters.
+GRC_COM_TR_ID_MISMATCH = 3093            # TRANSACTIONS ID mismatch error.
+GRC_COM_NOT_GEOCOM = 3094                # Protocol not recognizable.
+GRC_COM_UNKNOWN_PORT = 3095              # (WIN) Invalid port address.
+GRC_COM_ERO_END = 3099                   # ERO is terminating.
+GRC_COM_OVERRUN = 3100                   # Internal error: data buffer overflow.
+GRC_COM_SRVR_RX_CHECKSUM_ERRR = 3101     # Invalid checksum on server side received.
+GRC_COM_CLNT_RX_CHECKSUM_ERRR = 3102     # Invalid checksum on client side received.
+GRC_COM_PORT_NOT_AVAILABLE = 3103        # (WIN) Port not available.
+GRC_COM_PORT_NOT_OPEN = 3104             # (WIN) Port not opened.
+GRC_COM_NO_PARTNER = 3105                # (WIN) Unable to find TPS.
+GRC_COM_ERO_NOT_STARTED = 3106           # Extended Runtime Operation could not be started.
+GRC_COM_CONS_REQ = 3107                  # Att to send cons reqs
+GRC_COM_SRVR_IS_SLEEPING = 3108          # TPS has gone to sleep. Wait and try again.
+GRC_COM_SRVR_IS_OFF = 3109               # TPS has shut down. Wait and try again.
+WIR_PTNR_OVERFLOW = 5121                 # point number overflow
+WIR_NUM_ASCII_CARRY = 5122               # carry from number to ASCII conversion
+WIR_PTNR_NO_INC = 5123                   # can't increment point number
+WIR_STEP_SIZE = 5124                     # wrong step size
+WIR_BUSY = 5125                          # resource occupied
+WIR_CONFIG_FNC = 5127                    # user function selected
+WIR_CANT_OPEN_FILE = 5128                # can't open file
+WIR_FILE_WRITE_ERROR = 5129              # can't write into file
+WIR_MEDIUM_NOMEM = 5130                  # no anymore memory on PC-Card
+WIR_NO_MEDIUM = 5131                     # no PC-Card
+WIR_EMPTY_FILE = 5132                    # empty GSI file
+WIR_INVALID_DATA = 5133                  # invalid data in GSI file
+WIR_F2_BUTTON = 5134                     # F2 button pressed
+WIR_F3_BUTTON = 5135                     # F3 button pressed
+WIR_F4_BUTTON = 5136                     # F4 button pressed
+WIR_SHF2_BUTTON = 5137                   # SHIFT F2 button pressed
+GRC_AUT_TIMEOUT = 8704                   # Position not reached
+GRC_AUT_DETENT_ERROR = 8705              # Positioning not possible due to mounted EDM
+GRC_AUT_ANGLE_ERROR = 8706               # Angle measurement error
+GRC_AUT_MOTOR_ERROR = 8707               # Motorisation error
+GRC_AUT_INCACC = 8708                    # Position not exactly reached
+GRC_AUT_DEV_ERROR = 8709                 # Deviation measurement error
+GRC_AUT_NO_TARGET = 8710                 # No target detected
+GRC_AUT_MULTIPLE_TARGETS = 8711          # Multiple target detected
+GRC_AUT_BAD_ENVIRONMENT = 8712           # Bad environment conditions
+GRC_AUT_DETECTOR_ERROR = 8713            # Error in target acquisition
+GRC_AUT_NOT_ENABLED = 8714               # Target acquisition not enabled
+GRC_AUT_CALACC = 8715                    # ATR-Calibration failed
+GRC_AUT_ACCURACY = 8716                  # Target position not exactly reached
+GRC_AUT_DIST_STARTED = 8717              # Info: dist. measurement has been started
+GRC_AUT_SUPPLY_TOO_HIGH = 8718           # external Supply voltage is too high
+GRC_AUT_SUPPLY_TOO_LOW = 8719            # int. or ext. Supply voltage is too low
+GRC_AUT_NO_WORKING_AREA = 8720           # working area not set
+GRC_AUT_ARRAY_FULL = 8721                # power search data array is filled
+GRC_AUT_NO_DATA = 8722                   # no data available
+BAP_CHANGE_ALL_TO_DIST = 9217            # Command changed from ALL to DIST
+GRC_KDM_NOT_AVAILABLE = 12544            # KDM device is not available.
+GRC_FTR_FILEACCESS = 13056               # File access error
+GRC_FTR_WRONGFILEBLOCKNUMBER = 13057     # block number was not the expected one
+GRC_FTR_NOTENOUGHSPACE = 13058           # not enough space on device to proceed uploading
+GRC_FTR_INVALIDINPUT = 13059             # Rename of file failed.
+GRC_FTR_MISSINGSETUP = 13060             # invalid parameter as input
+
 
 MESSAGES = {0: "Function successfully completed.",
             1: "Unknown error, result unspecified.",
@@ -333,6 +359,14 @@ MESSAGES = {0: "Function successfully completed.",
             1292: "Error: distance measurement not done (no aim, etc.)",
             1293: "Error: system is busy (no measurement done)",
             1294: "Error: no signal on EDM (only in signal mode)",
+            1792: "Motorization not ready",
+            1793: "Motorization is handling another task",
+            1794: "Not in velocity mode",
+            1795: "Motorization is in the wrong mode or busy",
+            1796: "Not in posit mode",
+            1797: "Not in service mode",
+            1798: "Motorization is handling no task",
+            1799: "Not in tracking mode",
             2305: "Loading process already opened",
             2306: "Transfer not opened",
             2307: "Unknown character set",
@@ -380,6 +414,22 @@ MESSAGES = {0: "Function successfully completed.",
             3107: "Att to send cons reqs",
             3108: "TPS has gone to sleep. Wait and try again.",
             3109: "TPS has shut down. Wait and try again.",
+            5121: "point number overflow",
+            5122: "carry from number to ASCII conversion",
+            5123: "can't increment point number",
+            5124: "wrong step size",
+            5125: "resource occupied",
+            5127: "user function selected",
+            5128: "can't open file",
+            5129: "can't write into file",
+            5130: "no anymore memory on PC-Card",
+            5131: "no PC-Card",
+            5132: "empty GSI file",
+            5133: "invalid data in GSI file",
+            5134: "F2 button pressed",
+            5135: "F3 button pressed",
+            5136: "F4 button pressed",
+            5137: "SHIFT F2 button pressed",
             8704: "Position not reached",
             8705: "Positioning not possible due to mounted EDM",
             8706: "Angle measurement error",
@@ -399,6 +449,7 @@ MESSAGES = {0: "Function successfully completed.",
             8720: "working area not set",
             8721: "power search data array is filled",
             8722: "no data available",
+            9217: "Command changed from ALL to DIST",
             12544: "KDM device is not available.",
             13056: "File access error",
             13057: "block number was not the expected one",
@@ -539,6 +590,14 @@ CODES = {0: "GRC_OK",
          1292: "GRC_TMC_DIST_ERROR",
          1293: "GRC_TMC_BUSY",
          1294: "GRC_TMC_SIGNAL_ERROR",
+         1792: "MOT_RC_UNREADY",
+         1793: "MOT_RC_BUSY",
+         1794: "MOT_RC_NOT_OCONST",
+         1795: "MOT_RC_NOT_CONFIG",
+         1796: "MOT_RC_NOT_POSIT",
+         1797: "MOT_RC_NOT_SERVICE",
+         1798: "MOT_RC_NOT_BUSY",
+         1799: "MOT_RC_NOT_LOCK",
          2305: "GRC_BMM_XFER_PENDING",
          2306: "GRC_BMM_NO_XFER_OPEN",
          2307: "GRC_BMM_UNKNOWN_CHARSET",
@@ -586,6 +645,22 @@ CODES = {0: "GRC_OK",
          3107: "GRC_COM_CONS_REQ",
          3108: "GRC_COM_SRVR_IS_SLEEPING",
          3109: "GRC_COM_SRVR_IS_OFF",
+         5121: "WIR_PTNR_OVERFLOW",
+         5122: "WIR_NUM_ASCII_CARRY",
+         5123: "WIR_PTNR_NO_INC",
+         5124: "WIR_STEP_SIZE",
+         5125: "WIR_BUSY",
+         5127: "WIR_CONFIG_FNC",
+         5128: "WIR_CANT_OPEN_FILE",
+         5129: "WIR_FILE_WRITE_ERROR",
+         5130: "WIR_MEDIUM_NOMEM",
+         5131: "WIR_NO_MEDIUM",
+         5132: "WIR_EMPTY_FILE",
+         5133: "WIR_INVALID_DATA",
+         5134: "WIR_F2_BUTTON",
+         5135: "WIR_F3_BUTTON",
+         5136: "WIR_F4_BUTTON",
+         5137: "WIR_SHF2_BUTTON",
          8704: "GRC_AUT_TIMEOUT",
          8705: "GRC_AUT_DETENT_ERROR",
          8706: "GRC_AUT_ANGLE_ERROR",
@@ -605,6 +680,7 @@ CODES = {0: "GRC_OK",
          8720: "GRC_AUT_NO_WORKING_AREA",
          8721: "GRC_AUT_ARRAY_FULL",
          8722: "GRC_AUT_NO_DATA",
+         9217: "BAP_CHANGE_ALL_TO_DIST",
          12544: "GRC_KDM_NOT_AVAILABLE",
          13056: "GRC_FTR_FILEACCESS",
          13057: "GRC_FTR_WRONGFILEBLOCKNUMBER",
@@ -612,108 +688,198 @@ CODES = {0: "GRC_OK",
          13059: "GRC_FTR_INVALIDINPUT",
          13060: "GRC_FTR_MISSINGSETUP",
          }
-
-BMM_BeepAlarm = 11004           # Page: 46
-BMM_BeepNormal = 11003          # Page: 47
-COM_GetDoublePrecision = 108    # Page: 21
-COM_GetSWVersion = 110          # Page: 49
-COM_NullProc = 0                # Page: 52
-COM_SetDoublePrecision = 107    # Page: 22
-COM_SwitchOffTPS = 112          # Page: 51
-COM_SwitchOnTPS = 111           # Page: 50
-CSV_GetDateTime = 5008          # Page: 59
-CSV_GetDeviceConfig = 5035      # Page: 57, 58
-CSV_GetInstrumentName = 5004    # Page: 56
-CSV_GetInstrumentNo = 5003      # Page: 55
-CSV_GetIntTemp = 5011           # Page: 63
-CSV_GetSWVersion = 5034         # Page: 61
-CSV_SetDateTime = 5007          # Page: 60
-EDM_GetEglIntensity = 1058      # Page:  39, 40, 41, 42, 43, 44, 66
-EDM_Laserpointer = 1004         # Page: 65
-EDM_SetEglIntensity = 1059      # Page: 67
-SUP_GetConfig = 14001           # Page: 69
-SUP_SetConfig = 14002           # Page: 70
-TMC_DoMeasure = 2008            # Page: 86
-TMC_GetAngle1 = 2003            # Page: 79
-TMC_GetAngle5 = 2107            # Page: 81
-TMC_GetAngSwitch = 2014         # Page: 108
-TMC_GetAtmCorr = 2029           # Page: 91
-TMC_GetCoordinate = 2082        # Page: 75
-TMC_GetEdmMode = 2021           # Page: 111
-TMC_GetFace = 2026              # Page: 106
-TMC_GetHeight = 2011            # Page: 89
-TMC_GetInclineSwitch = 2007     # Page: 109
-TMC_GetPrismCorr = 2023         # Page: 95
-TMC_GetRefractiveCorr = 2031    # Page: 96
-TMC_GetRefractiveMethod = 2091  # Page: 98
-TMC_GetSignal = 2022            # Page: 107
-TMC_GetSimpleCoord = 2116       # Page: 113
-TMC_GetSimpleMea = 2108         # Page: 77
-TMC_GetSlopeDistCorr = 2126     # Page: 118
-TMC_GetStation = 2009           # Page: 100
-TMC_IfDataAzeCorrError = 2114   # Page: 115
-TMC_IfDataIncCorrError = 2115   # Page: 116
-TMC_QuickDist = 2117            # Page: 83
-TMC_SetAngSwitch = 2016         # Page: 117
-TMC_SetAtmCorr = 2028           # Page: 92
-TMC_SetEdmMode = 2020           # Page: 112
-TMC_SetHandDist = 2019          # Page: 87
-TMC_SetHeight = 2012            # Page: 90
-TMC_SetInclineSwitch = 2006     # Page: 110
-TMC_SetOrientation = 2113       # Page: 93
-TMC_SetRefractiveCorr = 2030    # Page: 97
-TMC_SetRefractiveMethod = 2090  # Page: 99
-TMC_SetStation = 2010           # Page: 101
+         
+COM_NullProc = 0
+COM_Local = 1
+COM_SetDoublePrecision = 107
+COM_GetDoublePrecision = 108
+COM_SetSendDelay = 109
+COM_GetSWVersion = 110
+COM_SwitchOnTPS = 111
+COM_SwitchOffTPS = 112
+COM_GetBinaryAvailable = 113
+COM_SetBinaryAvailable = 114
+COM_EnableSignOff = 115
+EDM_Laserpointer = 1004
+EDM_SetBumerang = 1007
+EDM_On = 1010
+EDM_SetTrkLightSwitch = 1031
+EDM_SetTrkLightBrightness = 1032
+EDM_GetTrkLightSwitch = 1040
+EDM_GetTrkLightBrightness = 1041
+EDM_GetBumerang = 1044
+EDM_GetEglIntensity = 1058
+EDM_SetEglIntensity = 1059
+TMC_GetAngle1 = 2003
+TMC_SetInclineSwitch = 2006
+TMC_GetInclineSwitch = 2007
+TMC_DoMeasure = 2008
+TMC_GetStation = 2009
+TMC_SetStation = 2010
+TMC_GetHeight = 2011
+TMC_SetHeight = 2012
+TMC_GetAngSwitch = 2014
+TMC_SetAngSwitch = 2016
+TMC_SetHandDist = 2019
+TMC_SetEdmMode = 2020
+TMC_GetEdmMode = 2021
+TMC_GetSignal = 2022
+TMC_GetPrismCorr = 2023
+TMC_SetPrismCorr = 2024
+TMC_GetFace = 2026
+TMC_SetAtmCorr = 2028
+TMC_GetAtmCorr = 2029
+TMC_SetRefractiveCorr = 2030
+TMC_GetRefractiveCorr = 2031
+TMC_GetCoordinate1 = 2082
+TMC_SetRefractiveMethod = 2090
+TMC_GetRefractiveMethod = 2091
+TMC_GetAngle5 = 2107
+TMC_GetSimpleMea = 2108
+TMC_SetOrientation = 2113
+TMC_IfDataAzeCorrError = 2114
+TMC_IfDataIncCorrError = 2115
+TMC_GetSimpleCoord = 2116
+TMC_QuickDist = 2117
+TMC_GetSlopeDistCorr = 2126
+CSV_GetInstrumentNo = 5003
+CSV_GetInstrumentName = 5004
+CSV_SetUserInstrumentName = 5005
+CSV_GetUserInstrumentName = 5006
+CSV_SetDateTime = 5007
+CSV_GetDateTime = 5008
+CSV_GetVBat = 5009
+CSV_GetVMem = 5010
+CSV_GetIntTemp = 5011
+CSV_GetSWVersion2 = 5034
+CSV_GetDeviceConfig = 5035
+MOT_StartController = 6001
+MOT_StopController = 6002
+MOT_SetVelocity = 6004
+MOT_ReadLockStatus = 6021
+WIR_GetRecFormat = 8011
+WIR_SetRecFormat = 8012
+AUT_SetTol = 9007
+AUT_ReadTol = 9008
+AUT_SetTimeout = 9011
+AUT_ReadTimeout = 9012
+AUT_LockIn = 9013
+AUT_SetATRStatus = 9018
+AUT_GetATRStatus = 9019
+AUT_SetLockStatus = 9020
+AUT_GetLockStatus = 9021
+AUT_MakePositioning4 = 9027
+AUT_ChangeFace4 = 9028
+AUT_Search2 = 9029
+AUT_GetFineAdjustMode = 9030
+AUT_SetFineAdjustMode = 9031
+AUT_FineAdjust3 = 9037
+BMM_BeepOn = 11001
+BMM_BeepOff = 11002
+BMM_BeepNormal = 11003
+BMM_BeepAlarm = 11004
+CTL_GetUpCounter = 12003
+SUP_GetConfig = 14001
+SUP_SetConfig = 14002
+SUP_SwitchLowTempControl = 14003
+BAP_GetLastDisplayedError = 17003
+BAP_MeasDistanceAngle = 17017
 CRLF = "\r\n"
 
-COMMAND_CODES = {"BMM_BeepAlarm": 11004,
-                 "BMM_BeepNormal": 11003,
-                 "COM_GetDoublePrecision": 108,
-                 "COM_GetSWVersion": 110,
-                 "COM_NullProc": 0,
+
+COMMAND_CODES = {"COM_NullProc": 0,
+                 "COM_Local": 1,
                  "COM_SetDoublePrecision": 107,
-                 "COM_SwitchOffTPS": 112,
+                 "COM_GetDoublePrecision": 108,
+                 "COM_SetSendDelay": 109,
+                 "COM_GetSWVersion": 110,
                  "COM_SwitchOnTPS": 111,
-                 "CSV_GetDateTime": 5008,
-                 "CSV_GetDeviceConfig": 5035,
-                 "CSV_GetInstrumentName": 5004,
-                 "CSV_GetInstrumentNo": 5003,
-                 "CSV_GetIntTemp": 5011,
-                 "CSV_GetSWVersion": 5034,
-                 "CSV_SetDateTime": 5007,
-                 "EDM_GetEglIntensity": 1058,
+                 "COM_SwitchOffTPS": 112,
+                 "COM_GetBinaryAvailable": 113,
+                 "COM_SetBinaryAvailable": 114,
+                 "COM_EnableSignOff": 115,
                  "EDM_Laserpointer": 1004,
+                 "EDM_SetBumerang": 1007,
+                 "EDM_On": 1010,
+                 "EDM_SetTrkLightSwitch": 1031,
+                 "EDM_SetTrkLightBrightness": 1032,
+                 "EDM_GetTrkLightSwitch": 1040,
+                 "EDM_GetTrkLightBrightness": 1041,
+                 "EDM_GetBumerang": 1044,
+                 "EDM_GetEglIntensity": 1058,
                  "EDM_SetEglIntensity": 1059,
-                 "SUP_GetConfig": 14001,
-                 "SUP_SetConfig": 14002,
-                 "TMC_DoMeasure": 2008,
                  "TMC_GetAngle1": 2003,
-                 "TMC_GetAngle5": 2107,
-                 "TMC_GetAngSwitch": 2014,
-                 "TMC_GetAtmCorr": 2029,
-                 "TMC_GetCoordinate": 2082,
-                 "TMC_GetEdmMode": 2021,
-                 "TMC_GetFace": 2026,
-                 "TMC_GetHeight": 2011,
+                 "TMC_SetInclineSwitch": 2006,
                  "TMC_GetInclineSwitch": 2007,
-                 "TMC_GetPrismCorr": 2023,
-                 "TMC_GetRefractiveCorr": 2031,
-                 "TMC_GetRefractiveMethod": 2091,
-                 "TMC_GetSignal": 2022,
-                 "TMC_GetSimpleCoord": 2116,
-                 "TMC_GetSimpleMea": 2108,
-                 "TMC_GetSlopeDistCorr": 2126,
+                 "TMC_DoMeasure": 2008,
                  "TMC_GetStation": 2009,
+                 "TMC_SetStation": 2010,
+                 "TMC_GetHeight": 2011,
+                 "TMC_SetHeight": 2012,
+                 "TMC_GetAngSwitch": 2014,
+                 "TMC_SetAngSwitch": 2016,
+                 "TMC_SetHandDist": 2019,
+                 "TMC_SetEdmMode": 2020,
+                 "TMC_GetEdmMode": 2021,
+                 "TMC_GetSignal": 2022,
+                 "TMC_GetPrismCorr": 2023,
+                 "TMC_SetPrismCorr": 2024,
+                 "TMC_GetFace": 2026,
+                 "TMC_SetAtmCorr": 2028,
+                 "TMC_GetAtmCorr": 2029,
+                 "TMC_SetRefractiveCorr": 2030,
+                 "TMC_GetRefractiveCorr": 2031,
+                 "TMC_GetCoordinate1": 2082,
+                 "TMC_SetRefractiveMethod": 2090,
+                 "TMC_GetRefractiveMethod": 2091,
+                 "TMC_GetAngle5": 2107,
+                 "TMC_GetSimpleMea": 2108,
+                 "TMC_SetOrientation": 2113,
                  "TMC_IfDataAzeCorrError": 2114,
                  "TMC_IfDataIncCorrError": 2115,
+                 "TMC_GetSimpleCoord": 2116,
                  "TMC_QuickDist": 2117,
-                 "TMC_SetAngSwitch": 2016,
-                 "TMC_SetAtmCorr": 2028,
-                 "TMC_SetEdmMode": 2020,
-                 "TMC_SetHandDist": 2019,
-                 "TMC_SetHeight": 2012,
-                 "TMC_SetInclineSwitch": 2006,
-                 "TMC_SetOrientation": 2113,
-                 "TMC_SetRefractiveCorr": 2030,
-                 "TMC_SetRefractiveMethod": 2090,
-                 "TMC_SetStation": 2010}
+                 "TMC_GetSlopeDistCorr": 2126,
+                 "CSV_GetInstrumentNo": 5003,
+                 "CSV_GetInstrumentName": 5004,
+                 "CSV_SetUserInstrumentName": 5005,
+                 "CSV_GetUserInstrumentName": 5006,
+                 "CSV_SetDateTime": 5007,
+                 "CSV_GetDateTime": 5008,
+                 "CSV_GetVBat": 5009,
+                 "CSV_GetVMem": 5010,
+                 "CSV_GetIntTemp": 5011,
+                 "CSV_GetSWVersion2": 5034,
+                 "CSV_GetDeviceConfig": 5035,
+                 "MOT_StartController": 6001,
+                 "MOT_StopController": 6002,
+                 "MOT_SetVelocity": 6004,
+                 "MOT_ReadLockStatus": 6021,
+                 "WIR_GetRecFormat": 8011,
+                 "WIR_SetRecFormat": 8012,
+                 "AUT_SetTol": 9007,
+                 "AUT_ReadTol": 9008,
+                 "AUT_SetTimeout": 9011,
+                 "AUT_ReadTimeout": 9012,
+                 "AUT_LockIn": 9013,
+                 "AUT_SetATRStatus": 9018,
+                 "AUT_GetATRStatus": 9019,
+                 "AUT_SetLockStatus": 9020,
+                 "AUT_GetLockStatus": 9021,
+                 "AUT_MakePositioning4": 9027,
+                 "AUT_ChangeFace4": 9028,
+                 "AUT_Search2": 9029,
+                 "AUT_GetFineAdjustMode": 9030,
+                 "AUT_SetFineAdjustMode": 9031,
+                 "AUT_FineAdjust3": 9037,
+                 "BMM_BeepOn": 11001,
+                 "BMM_BeepOff": 11002,
+                 "BMM_BeepNormal": 11003,
+                 "BMM_BeepAlarm": 11004,
+                 "CTL_GetUpCounter": 12003,
+                 "SUP_GetConfig": 14001,
+                 "SUP_SetConfig": 14002,
+                 "SUP_SwitchLowTempControl": 14003,
+                 "BAP_GetLastDisplayedError": 17003,
+                 "BAP_MeasDistanceAngle": 17017,
+                 }
