@@ -72,6 +72,7 @@ class COM_SwitchOffTPS(TachyRequest):
 This is to be used in conjunction with an implementation map that informs the dispatcher, which dialect is used for each command by the connected total station. 
 When implementing a remote shut down button we would instantiate `COM_SwitchOffTPS` and submit it to the dispatcher.
 The dispatcher looks up which dialect implements the functionality and generate the relevant message by calling either `get_gsi_command()` or `get_geocom_command()` and append the result to the respective queue.
+
 ***END of fiction***
 
 The class name is also used as label, which in turn can be used to link commands to slots.

@@ -95,6 +95,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.actiondump_implementation_chart.triggered.connect(self.dump_capabilities)
         self.dispatcher.timed_out.connect(self.log_append)
         self.dispatcher.log.connect(self.log_append)
+        self.dispatcher.non_requested_data.connect(self.surprise)
 
     def log_append(self, text):
         self.log_viewer.setPlainText(self.log_viewer.toPlainText() + "\n" + text)
@@ -121,6 +122,9 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def reply_received(self, request, reply):
         self.log_append(f"Received: {reply}")
+
+    def surprise(self, tadaa):
+        self.log_append("This came in unsolicited:\n" + tadaa)
 
     def toast(self):
         # beep = GeoCOMCommand(str(gc.BMM_BeepAlarm))

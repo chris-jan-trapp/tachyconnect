@@ -151,8 +151,10 @@ class GeoCOMReply(TachyReply):
         return payload.split(",")
 
 
-class MessageQueue:
+class MessageQueue(QObject):
+    non_requested_data = pyqtSignal(str) 
     def __init__(self, n_slots=7):
+        super().__init__()
         self.indices = list(range(1, n_slots + 1))
         self.slots = {}
         self.serial = QSerialPort
@@ -185,8 +187,11 @@ class MessageQueue:
 
     def register_reply(self, reply: TachyReply) -> tuple:
         message_id = reply.get_transaction_id()
-        request = self.slots.pop(message_id)
-        return request, reply
+        try:
+            request = self.slots.pop(message_id)
+            return request, reply
+        except KeyError:
+            self.non_requested_data.emit(reply.ascii)
 
     def close(self):
         self.serial.close()
@@ -201,6 +206,7 @@ class Dispatcher(QThread):
     serial_disconnected = pyqtSignal(str) 
     timed_out = pyqtSignal(str)
     log = pyqtSignal(str)
+    non_requested_data = pyqtSignal(str)
 
     def __init__(self, gsi_queue: MessageQueue, geocom_queue: MessageQueue, reply_handler, parent = None) -> None:
         super(self.__class__, self).__init__(parent)
@@ -212,6 +218,11 @@ class Dispatcher(QThread):
         self.reply_types = {CommunicationConstants.GSI: GSIReply,
                             CommunicationConstants.GEOCOM: GeoCOMReply}
         self.reply_handler = reply_handler
+        for queue in self.queues.values():
+            queue.non_requested_data.connect(self.emit_non_requested_data)
+
+    def emit_non_requested_data(self, data):
+        self.non_requested_data.emit(data)
 
     def hook_up(self):
         # close port if connection is established
@@ -275,9 +286,13 @@ class Dispatcher(QThread):
         protocol = reply.get_protocol()
         reply_type = self.reply_types[protocol]
         queue = self.queues[protocol]
-        
-        self.reply_handler.handle(*queue.register_reply(reply_type(reply.bites)))
-
+        try:
+            self.reply_handler.handle(*queue.register_reply(reply_type(reply.bites)))
+        except TypeError:
+            """TypeErrors usually stem from incoming data that can not be
+            associated with any request. These are handled by the 'non_requested_data'
+            signal."""
+            pass
     
 class Ping(QThread):
     found_tachy = pyqtSignal(str)
