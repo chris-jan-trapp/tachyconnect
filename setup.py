@@ -19,10 +19,10 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
-        "Development Status :: 3 - Alpha"
+        "Development Status :: 4 - Beta"
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=["pyqt5"]
 )

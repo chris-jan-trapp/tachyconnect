@@ -1,6 +1,7 @@
 # tachyconnect
 
 This package can be used make Qt applications communicate with [leica](https://leica-geosystems.com/) total stations.
+Qt is required to provide threading and signal/ slot infrastructure. 
 It provides a message abstraction for the [GSI](https://totalopenstation.readthedocs.io/en/stable/input_formats/if_leica_gsi.html) and [geoCOM](http://webarchiv.ethz.ch/geometh-data/student/eg1/2010/02_deformation/TPS1200_GeoCOM_Manual.pdf) protocols.
 
 ## The Concept
@@ -31,11 +32,16 @@ print(parse(reply))
 ```
 
 The first carries the actual data, cast to an appropriate type, the second one provides a string that informs us about the unit. 
-The keys (except 'precision', which is attached by the parser) are taken from the `dict_units_attributes_digits`, around line 240 in the parser source.
+The keys (except `precision`, which is attached by the parser) are taken from the `dict_units_attributes_digits`, around line 240 in the parser source.
+The `precision` entry refers to the number of available digits for each datum.
+GSI uses a fixed field width and GSI8 provides eight places for data.
+The newer format GSI16 used in the example surprises with sixteen places.
+Which dialect is used is indicated by the leading asterisk of the reply.
+
 
 #### `geo_com.py'
 
-This is legacy code that has been replaced by 'TachyRequest.py` that primarily exists as design notes for Christian. 
+This is legacy code that has been replaced by 'TachyRequest.py` that primarily exists as design notes for the author. 
 
 
 #### `gc_constants.py`
@@ -98,3 +104,7 @@ Besides that the following methods are provided:
 1. `register_command(self, command_class, slot)`: Takes any class from `TachyRequest` ⬆️ and a callable. When the reply to the request shows up, the result is extracted from the reply and passed to the callable which is then invoked. The association between requests and callables is implemented as a dict so each request can have at most one function to handle its results.
 1. `unregister_command(self, command_class)`: Allows to delete the association between a request and an action.
 1. `handle(self, request, reply)`: This is called from the dispatcher when a reply is being received on a queue. Note that the queue bundles each reply with the request that triggered it. The ReplyHandler now looks for an associated function to call. If none is found, request and reply are directed to the fallback signal (if provided earlier).
+
+## The Console
+
+The `tachy_console.py` provides you with debugging functionalities and examples for sending and receiving messages.
