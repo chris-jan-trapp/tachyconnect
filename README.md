@@ -92,11 +92,11 @@ The constructor takes a timeout in seconds (defaults to 2) and optional paramete
 
 This guy was designed to provide a connection between Qt slots and total station replies, along the lines of "When the reply to a `TMC_GetCoordinate` request comes in, fire a `got_coordinate` signal.
 It also emits a fall back signal when it encounters replies that have no connected slot. 
-⚠️ ***THIS DOES NOT WORK*** because the design of Qt's signal/ slot architecture prohibits the creation of signal at runtime.
+⚠️ ***THIS DOES NOT WORK*** because the design of Qt's signal/ slot architecture prohibits the creation of signals at runtime.
 
 ***HOWEVER*** We can do the next best thing.
 Signals and slots are only really required for communication between treads. 
-As long as we stay in the main class of our widget, we can use callables instead of slots
+As long as we stay in the main class of our widget, we can use callables instead of slots.
 
 This slot should be passed to the ctor.
 Besides that the following methods are provided:
