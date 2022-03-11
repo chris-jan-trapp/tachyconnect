@@ -40,6 +40,17 @@ class Window(QMainWindow, Ui_MainWindow):
         
         self.connectSignalsSlots()
 
+    def connectSignalsSlots(self):
+        self.action_Quit.triggered.connect(self.close)
+        self.send_command.clicked.connect(self.toast)
+        self.actionconnect.triggered.connect(self.dispatcher.hook_up)
+        self.actionidentify.triggered.connect(self.request_id)
+        self.actionextract_capabilities.triggered.connect(self.extract_capabilities)
+        self.actiondump_implementation_chart.triggered.connect(self.dump_capabilities)
+        self.dispatcher.timed_out.connect(self.log_append)
+        self.dispatcher.log.connect(self.log_append)
+        self.dispatcher.non_requested_data.connect(self.surprise)
+
     def request_id(self):
         self.dispatcher.send(TachyRequest.CSV_GetInstrumentName().get_geocom_command())
     
@@ -85,17 +96,6 @@ class Window(QMainWindow, Ui_MainWindow):
     
     def log_codes(self, *args):
         self.log_append(self.read_return_codes(True, *args))
-
-    def connectSignalsSlots(self):
-        self.action_Quit.triggered.connect(self.close)
-        self.send_command.clicked.connect(self.toast)
-        self.actionconnect.triggered.connect(self.dispatcher.hook_up)
-        self.actionidentify.triggered.connect(self.request_id)
-        self.actionextract_capabilities.triggered.connect(self.extract_capabilities)
-        self.actiondump_implementation_chart.triggered.connect(self.dump_capabilities)
-        self.dispatcher.timed_out.connect(self.log_append)
-        self.dispatcher.log.connect(self.log_append)
-        self.dispatcher.non_requested_data.connect(self.surprise)
 
     def log_append(self, text):
         self.log_viewer.setPlainText(self.log_viewer.toPlainText() + "\n" + text)

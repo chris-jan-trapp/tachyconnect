@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="tachyconnect-pkg-gbv",
+    name="tachyconnect",
     version="0.2.1",
     author="Christian Trapp",
     author_email="trapp@gbv.de",
