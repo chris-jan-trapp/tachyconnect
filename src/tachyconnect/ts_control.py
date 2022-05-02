@@ -1,5 +1,6 @@
 from time import time, sleep
 from enum import Enum
+from xml.etree.ElementTree import PI
 
 from PyQt5.QtSerialPort import QSerialPort, QSerialPortInfo
 from PyQt5.QtCore import QEventLoop, QObject, QTimer, QThread, pyqtSignal
@@ -233,13 +234,16 @@ class Dispatcher(QThread):
             self.serial_disconnected.emit(port_name)
             return
         port_names = [port.portName() for port in QSerialPortInfo.availablePorts()]
-        for port_name in port_names:
-            ping = Ping(port_name, timeout=500)
-            ping.found_tachy.connect(self.set_serial_port)
-            ping.found_something.connect(self.send_log)
-            ping.timed_out.connect(self.send_log)
-            ping.pinging.connect(self.send_log)
-            ping.fire()
+        port_names.reverse()
+        print(port_names)
+        def moin():
+            if port_names:
+                ping = Ping(port_names.pop(), 500)
+                ping.timed_out.connect(moin)
+                ping.found_tachy.connect(self.set_serial_port)
+                ping.fire()
+        moin()
+        print(port_names)
     
     def start(self):
         self.pollingTimer.start(self.pollingInterval)
