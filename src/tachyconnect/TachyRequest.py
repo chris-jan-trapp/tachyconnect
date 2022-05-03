@@ -47,6 +47,14 @@ class COM_GetDoublePrecision(TachyRequest):
     
 class COM_SetSendDelay(TachyRequest):
     pass
+
+
+class COM_GetBinaryAvailable(TachyRequest):
+    pass
+    
+    
+class COM_SetBinaryAvailable(TachyRequest):
+    pass
     
     
 class COM_GetSWVersion(TachyRequest):
@@ -59,14 +67,6 @@ class COM_SwitchOnTPS(TachyRequest):
     
 class COM_SwitchOffTPS(TachyRequest):
     gsi_command = "b"
-    
-    
-class COM_GetBinaryAvailable(TachyRequest):
-    pass
-    
-    
-class COM_SetBinaryAvailable(TachyRequest):
-    pass
     
     
 class COM_EnableSignOff(TachyRequest):
@@ -135,7 +135,7 @@ class TMC_GetStation(TachyRequest):
     
 class TMC_SetStation(TachyRequest):
     pass
-    
+     
     
 class TMC_GetHeight(TachyRequest):
     gsi_command = "GET/I/WI88"
@@ -191,10 +191,14 @@ class TMC_GetAtmCorr(TachyRequest):
     
 class TMC_SetRefractiveCorr(TachyRequest):
     pass
-    
+   
     
 class TMC_GetRefractiveCorr(TachyRequest):
     gsi_command = "GET/I/WI538"
+    
+    
+class TMC_GetCoordinate(TachyRequest):
+    pass
     
     
 class TMC_GetCoordinate1(TachyRequest):
@@ -243,7 +247,7 @@ class TMC_GetSlopeDistCorr(TachyRequest):
     
 class CSV_GetInstrumentNo(TachyRequest):
     pass
-    
+      
     
 class CSV_GetInstrumentName(TachyRequest):
     gsi_command = "GET/I/WI13"
@@ -274,6 +278,10 @@ class CSV_GetVMem(TachyRequest):
     
     
 class CSV_GetIntTemp(TachyRequest):
+    pass
+    
+    
+class CSV_GetSWVersion(TachyRequest):
     pass
     
     
@@ -345,11 +353,23 @@ class AUT_GetLockStatus(TachyRequest):
     pass
     
     
+class AUT_MakePositioning(TachyRequest):
+    pass
+    
+    
 class AUT_MakePositioning4(TachyRequest):
     pass
     
     
+class AUT_ChangeFace(TachyRequest):
+    pass
+    
+    
 class AUT_ChangeFace4(TachyRequest):
+    pass
+    
+    
+class AUT_Search(TachyRequest):
     pass
     
     
@@ -365,7 +385,43 @@ class AUT_SetFineAdjustMode(TachyRequest):
     pass
     
     
+class AUT_FineAdjust(TachyRequest):
+    pass
+    
+    
 class AUT_FineAdjust3(TachyRequest):
+    pass
+    
+    
+class AUT_GetUserSpiral(TachyRequest):
+    pass
+    
+    
+class AUT_SetUserSpiral(TachyRequest):
+    pass
+    
+    
+class AUT_GetSearchArea(TachyRequest):
+    pass
+    
+    
+class AUT_SetSearchArea(TachyRequest):
+    pass
+    
+    
+class AUT_PS_SetRange(TachyRequest):
+    pass
+    
+    
+class AUT_PS_EnableRange(TachyRequest):
+    pass
+    
+    
+class AUT_PS_SearchNext(TachyRequest):
+    pass
+    
+    
+class AUT_PS_SearchWindow(TachyRequest):
     pass
     
     
@@ -405,8 +461,77 @@ class BAP_GetLastDisplayedError(TachyRequest):
     pass
     
     
+class BAP_SetPrismType(TachyRequest):
+    pass
+    
+    
+class BAP_GetPrismType(TachyRequest):
+    pass
+    
+    
 class BAP_MeasDistanceAngle(TachyRequest):
     pass
+    
+    
+class BAP_GetMeasPrg(TachyRequest):
+    pass
+    
+    
+class BAP_SetMeasPrg(TachyRequest):
+    pass
+    
+    
+class BAP_SearchTarget(TachyRequest):
+    pass
+    
+    
+class BAP_SetTargetType(TachyRequest):
+    pass
+    
+    
+class BAP_GetTargetType(TachyRequest):
+    pass
+    
+    
+class BAP_GetPrismDef(TachyRequest):
+    pass
+    
+    
+class BAP_SetPrismDef(TachyRequest):
+    pass
+    
+    
+class AUS_SetUserAtrState(TachyRequest):
+    pass
+    
+    
+class AUS_GetUserAtrState(TachyRequest):
+    pass
+    
+    
+class AUS_SetUserLockState(TachyRequest):
+    pass
+    
+    
+class AUS_GetUserLockState(TachyRequest):
+    pass
+    
+    
+class AUS_SwitchRcsSearch(TachyRequest):
+    pass
+    
+    
+class AUS_GetRcsSearchSwitch(TachyRequest):
+    pass
+    
+    
+class IOS_BeepOff(TachyRequest):
+    pass
+    
+    
+class IOS_BeepOn(TachyRequest):
+    pass
+    
     
 
 ALL_COMMANDS = [
@@ -452,6 +577,7 @@ ALL_COMMANDS = [
     TMC_GetAtmCorr,
     TMC_SetRefractiveCorr,
     TMC_GetRefractiveCorr,
+    TMC_GetCoordinate,
     TMC_GetCoordinate1,
     TMC_SetRefractiveMethod,
     TMC_GetRefractiveMethod,
@@ -472,6 +598,7 @@ ALL_COMMANDS = [
     CSV_GetVBat,
     CSV_GetVMem,
     CSV_GetIntTemp,
+    CSV_GetSWVersion,
     CSV_GetSWVersion2,
     CSV_GetDeviceConfig,
     MOT_StartController,
@@ -489,12 +616,24 @@ ALL_COMMANDS = [
     AUT_GetATRStatus,
     AUT_SetLockStatus,
     AUT_GetLockStatus,
+    AUT_MakePositioning,
     AUT_MakePositioning4,
+    AUT_ChangeFace,
     AUT_ChangeFace4,
+    AUT_Search,
     AUT_Search2,
     AUT_GetFineAdjustMode,
     AUT_SetFineAdjustMode,
+    AUT_FineAdjust,
     AUT_FineAdjust3,
+    AUT_GetUserSpiral,
+    AUT_SetUserSpiral,
+    AUT_GetSearchArea,
+    AUT_SetSearchArea,
+    AUT_PS_SetRange,
+    AUT_PS_EnableRange,
+    AUT_PS_SearchNext,
+    AUT_PS_SearchWindow,
     BMM_BeepOn,
     BMM_BeepOff,
     BMM_BeepNormal,
@@ -504,7 +643,24 @@ ALL_COMMANDS = [
     SUP_SetConfig,
     SUP_SwitchLowTempControl,
     BAP_GetLastDisplayedError,
-    BAP_MeasDistanceAngle]
+    BAP_SetPrismType,
+    BAP_GetPrismType,
+    BAP_MeasDistanceAngle,
+    BAP_GetMeasPrg,
+    BAP_SetMeasPrg,
+    BAP_SearchTarget,
+    BAP_SetTargetType,
+    BAP_GetTargetType,
+    BAP_GetPrismDef,
+    BAP_SetPrismDef,
+    AUS_SetUserAtrState,
+    AUS_GetUserAtrState,
+    AUS_SetUserLockState,
+    AUS_GetUserLockState,
+    AUS_SwitchRcsSearch,
+    AUS_GetRcsSearchSwitch,
+    IOS_BeepOff,
+    IOS_BeepOn]
     
 if __name__=="__main__":
     set_station = TMC_SetStation()
