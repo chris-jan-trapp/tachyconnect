@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="tachyconnect",
-    version="0.3.0",
+    version="0.3.1",
     author="Christian Trapp",
     author_email="trapp@gbv.de",
     description="Leica total stations and Qt via python",
