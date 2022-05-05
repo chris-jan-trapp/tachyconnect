@@ -1,3 +1,6 @@
+from enum import Enum
+
+
 GRC_OK = 0                               # Function successfully completed.
 GRC_UNDEFINED = 1                        # Unknown error, result unspecified.
 GRC_IVPARAM = 2                          # Invalid parameter detected. Result unspecified.
@@ -945,3 +948,202 @@ COMMAND_CODES = {'AUS_GetRcsSearchSwitch': 18010,
                  'WIR_GetRecFormat': 8011,
                  'WIR_SetRecFormat': 8012,
                  }
+
+# enums
+
+class ON_OFF_TYPE(Enum):  # on/off switch type
+    OFF = 0  # Switch is off
+    ON = 1  # Switch is on
+
+# AUT
+# Position Precision
+class AUT_POSMODE(Enum):
+    AUT_NORMAL = 0  # fast positioning mode
+    AUT_PRECISE = 1  # exact positioning mode
+    # note: can distinctly claim more time for the positioning
+    
+# Fine-adjust Position Mode
+class AUT_ADJMODE(Enum):
+# Possible settings of the positioning
+# tolerance relating the angle- or the
+# point- accuracy at the fine adjust.
+    AUT_NORM_MODE = 0  # Angle tolerance
+    AUT_POINT_MODE = 1  # Point tolerance
+    AUT_DEFINE_MODE = 2  # System independent positioning tolerance. Set with AUT_SetTol
+
+# Automatic Target Recognition Mode
+class AUT_ATRMODE(Enum):  # Possible modes of the target recognition
+    AUT_POSITION = 0  # Positioning to the hz- and v-angle
+    AUT_TARGET = 1  # Positioning to a target in the environment of the hz- and v-angle.
+    
+# BAP - Measurement Modes
+class BAP_MEASURE_PRG(Enum):
+    BAP_NO_MEAS = 0  # no measurements, take last one
+    BAP_NO_DIST = 1  # no dist. measurement, angles only
+    BAP_DEF_DIST = 2  # default distance measurements, pre-defined using BAP_SetMeasPrg
+    BAP_CLEAR_DIST = 5  # clear distances
+    BAP_STOP_TRK = 6  # stop tracking laser
+
+# BAP - Distance measurement programs
+class BAP_USER_MEASPRG(Enum):
+    BAP_SINGLE_REF_STANDARD = 0  # standard single IR distance with reflector
+    BAP_SINGLE_REF_FAST = 1  # fast single IR distance with reflector
+    BAP_SINGLE_REF_VISIBLE = 2  # long range distance with reflector (red laser)
+    BAP_SINGLE_RLESS_VISIBLE = 3  # single RL distance, reflector free (red laser)
+    BAP_CONT_REF_STANDARD = 4  # tracking IR distance with reflector
+    BAP_CONT_REF_FAST = 5  # fast tracking IR distance with reflector
+    BAP_CONT_RLESS_VISIBLE = 6  # fast tracking RL distance, reflector free (red)
+    BAP_AVG_REF_STANDARD = 7  # Average IR distance with reflector
+    BAP_AVG_REF_VISIBLE = 8  # Average long range dist. with reflector (red)
+    BAP_AVG_RLESS_VISIBLE = 9  # Average RL distance, reflector free (red laser)
+
+# BAP - Prism type definition
+class BAP_PRISMTYPE(Enum):
+    BAP_PRISM_ROUND = 0  # prism type: round
+    BAP_PRISM_MINI = 1  # prism type: mini
+    BAP_PRISM_TAPE = 2  # prism type: tape
+    BAP_PRISM_360 = 3  # prism type: 360
+    BAP_PRISM_USER1 = 4  # prism type: user1
+    BAP_PRISM_USER2 = 5  # prism type: user2
+    BAP_PRISM_USER3 = 6  # prism type: user3
+    
+# BAP - Reflector type definition
+class BAP_REFLTYPE(Enum):
+    BAP_REFL_UNDEF = 0  # reflector not defined
+    BAP_REFL_PRISM = 1  # reflector prism
+    BAP_REFL_TAPE = 2  # reflector tape
+
+# BAP - Target type definition
+class BAP_TARGET_TYPE(Enum):
+    BAP_REFL_USE = 0  # with reflector
+    BAP_REFL_LESS = 1  # without reflector
+
+# COM
+class COM_FORMAT(Enum):
+    COM_ASCII = 0 # Force ASCII comm.
+    COM_BINARY = 1 # Enable binary comm.
+
+class COM_BAUD_RATE(Enum):
+    COM_BAUD_38400 = 0
+    COM_BAUD_19200 = 1  # default baud rate
+    COM_BAUD_9600 = 2
+    COM_BAUD_4800 = 3
+    COM_BAUD_2400 = 4
+    
+class COM_TPS_STATUS(Enum):
+    COM_TPS_OFF = 0  # switched off
+    COM_TPS_SLEEPING = 1  # sleep mode
+    COM_TPS_ONLINE = 2  # online mode
+    COM_TPS_LOCAL = 3  # local mode
+    COM_TPS_UNKNOWN = 4  # unknown or not initialised
+
+# COM - Start Mode, used in COM_SwitchOnTPS(COM_TPS_STARTUP_MODE eOnMode)
+class COM_TPS_STARTUP_MODE(Enum):
+    COM_TPS_STARTUP_LOCAL = 0  # RPC’s enabled, local mode
+    COM_TPS_STARTUP_REMOTE= 1  # RPC’s enabled, online mode
+
+# COM - Stop Mode, used in COM_SwitchOffTPS(COM_TPS_STOP_MODE eOffMode)
+class COM_TPS_STOP_MODE(Enum):
+    COM_TPS_STOP_SHUT_DOWN = 0  # power down instrument
+    COM_TPS_STOP_SLEEP = 1  # puts instrument into sleep state
+
+# //? TODO: unused?
+# TPS Device Precision Class
+class TPS_DEVICE_CLASS(Enum):
+    TPS_CLASS_1100 = 0  # TPS1000 family member, 1 mgon, 3"
+    TPS_CLASS_1700 = 1  # TPS1000 family member, 0.5 mgon, 1.5"
+    TPS_CLASS_1800 = 2  # TPS1000 family member, 0.3 mgon, 1"
+    TPS_CLASS_5000 = 3  # TPS2000 family member
+    TPS_CLASS_6000 = 4  # TPS2000 family member
+    TPS_CLASS_1500 = 5  # TPS1000 family member
+    TPS_CLASS_2003 = 6  # TPS2000 family member
+    TPS_CLASS_5005 = 7  # TPS5000 family member
+    TPS_CLASS_5100 = 8  # TPS5000 family member
+    TPS_CLASS_1102 = 100  # TPS1100 family member, 2"
+    TPS_CLASS_1103 = 101  # TPS1100 family member, 3"
+    TPS_CLASS_1105 = 102  # TPS1100 family member, 5"
+    TPS_CLASS_1101 = 103  # TPS1100 family member, 1"
+
+# //? TODO: unused?
+# TPS Device Configuration Type
+class TPS_DEVICE_TYPE(Enum):
+    TPS_DEVICE_T = 0x00000  # theodolite without built-in EDM
+    TPS_DEVICE_TC1 = 0x00001  # tachymeter built-in
+    TPS_DEVICE_TC2 = 0x00002  # tachymeter with red red laser built-in
+    TPS_DEVICE_MOT = 0x00004  # motorized device
+    TPS_DEVICE_ATR = 0x00008  # automatic target recognition
+    TPS_DEVICE_EGL = 0x00010  # electronic guide light
+    TPS_DEVICE_DB = 0x00020  # reserved
+    TPS_DEVICE_DL = 0x00040  # diode laser
+    TPS_DEVICE_LP = 0x00080  # laser plummet
+    TPS_DEVICE_ATC = 0x00100  # autocollimination lamp
+    TPS_DEVICE_LPNT= 0x00200  # Laserpointer
+    TPS_DEVICE_RL_EXT = 0x00400  # Red laser with extended range
+    TPS_DEVICE_SIM = 0x04000  # runs on simulation, not on hardware
+    
+# EDM - Intensity of Electronic Guidelight
+class EDM_EGLINTENSITY_TYPE(Enum):
+    EDM_EGLINTEN_OFF = 0,
+    EDM_EGLINTEN_LOW = 1,
+    EDM_EGLINTEN_MID = 2,
+    EDM_EGLINTEN_HIGH = 3
+
+# MOT - Lock Conditions
+class MOT_LOCK_STATUS(Enum):
+    MOT_LOCKED_OUT = 0  # locked out
+    MOT_LOCKED_IN = 1  # locked in
+    MOT_PREDICTION = 2  # prediction mode
+    
+# MOT - Controller Stop Mode
+class MOT_STOPMODE(Enum):
+    MOT_NORMAL = 0  # slow down with current acceleration
+    MOT_SHUTDOWN = 1  # slow down by switch off power supply
+
+# MOT - Controller Configuration
+class MOT_MODE(Enum):
+    MOT_POSIT = 0  # configured for relative postioning
+    MOT_OCONST = 1  # configured for constant speed
+    MOT_MANUPOS = 2  # configured for manual positioning default setting
+    MOT_LOCK = 3  # configured as "Lock-In"-controller
+    MOT_BREAK = 4 # configured as "Brake"-controller do not use 5 and 6
+    MOT_TERM = 7  # terminates the controller task
+
+# SUP - Automatic Shutdown Mechanism for the System
+class SUP_AUTO_POWER(Enum):
+    AUTO_POWER_DISABLED = 0  # deactivate the mechanism
+    AUTO_POWER_SLEEP = 1  # activate sleep mechanism
+    AUTO_POWER_OFF = 2  # activate shut down mechanism
+
+# TMC - Inclination Sensor Measurement Program
+class TMC_INCLINE_PRG(Enum):
+    TMC_MEA_INC = 0  # Use sensor (apriori sigma)
+    TMC_AUTO_INC = 1  # Automatic mode (sensor/plane)
+    TMC_PLANE_INC = 2  # Use plane (apriori sigma)
+
+# TMC - Measurement Mode
+class TMC_MEASURE_PRG(Enum):
+    TMC_STOP = 0  # Stop measurement program
+    TMC_DEF_DIST = 1  # Default DIST-measurement program
+    TMC_TRK_DIST = 2  # Distance-TRK measurement program
+    TMC_CLEAR = 3  # TMC_STOP and clear data
+    TMC_SIGNAL = 4  # Signal measurement (test function)
+    TMC_DO_MEASURE = 6  # (Re)start measurement task
+    TMC_RTRK_DIST = 8  # Distance-TRK measurement program
+    TMC_RED_TRK_DIST = 10  # Red laser tracking
+    TMC_FREQUENCY = 11  # Frequency measurement (test)
+
+# EDM - Measurement Mode
+class EDM_MODE(Enum):
+    EDM_MODE_NOT_USED = 0  # Init value
+    EDM_SINGLE_TAPE = 1  # Single measurement with tape
+    EDM_SINGLE_STANDARD = 2  # Standard single measurement
+    EDM_SINGLE_FAST = 3  # Fast single measurement
+    EDM_SINGLE_LRANGE = 4  # Long range single measurement
+    EDM_SINGLE_SRANGE = 5  # Short range single measurement
+    EDM_CONT_STANDARD = 6  # Standard repeated measurement
+    EDM_CONT_DYNAMIC = 7  # Dynamic repeated measurement
+    EDM_CONT_REFLESS = 8  # Reflectorless repeated measurement
+    EDM_CONT_FAST = 9  # Fast repeated measurement
+    EDM_AVERAGE_IR = 10  # Standard average measurement
+    EDM_AVERAGE_SR = 11  # Short range average measurement
+    EDM_AVERAGE_LR = 12  # Long range average measurent
