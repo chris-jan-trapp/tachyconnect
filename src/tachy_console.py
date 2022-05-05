@@ -26,7 +26,7 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         
-        self.reply_handler = ReplyHandler(fall_back=self.stringify)
+        self.reply_handler = ReplyHandler(fall_back=self.show_request_reply)
         self.reply_handler.register_command(TachyRequest.CSV_GetInstrumentName, self.identify)
         self.commands_by_name = dict(map(lambda k: (k.__name__, k), TachyRequest.ALL_COMMANDS))
 
@@ -102,7 +102,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.log_viewer.setPlainText(self.log_viewer.toPlainText() + "\n" + text)
         scroll_bar = self.log_viewer.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
-        
+    
     def log_reply(self, reply):
         self.log_append("Reply: " + str(reply))
 
@@ -113,7 +113,15 @@ class Window(QMainWindow, Ui_MainWindow):
         try:
             self.log_append(args[1].get_results())
         except:
-            self.log_append(str(args))     
+            self.log_append(str(args))
+
+    def show_request_reply(self, message_and_reply):
+        message, reply = message_and_reply[:2]
+        print(message, reply)
+        request = message['message']
+        text = f"""Request: {str(request)}
+        returned: {str(reply)} with: {' '.join([gc_constants.MESSAGES.get(int(code), f'unknown GRC: {code}') for code in reply.get_result()])}"""
+        self.log_append(text)
         
     def dump_capabilities(self):
         if not self.device_type and self.implementation_chart:
