@@ -33,11 +33,9 @@ class TachyCommand(QObject):
     MESSAGE_PREFIX = ""
     REPLY_PREFIX = ""
     protocol = None
-    signal = pyqtSignal
 
-    def __init__(self, command: str, label = None, time_out = 2, signal = None, args = []) -> None:
+    def __init__(self, command: str, label = None, time_out = 2, args = []) -> None:
         super().__init__()
-        self.signal = signal
         self.command = command
         self.args = args
         self.transaction_id = 0
@@ -86,13 +84,13 @@ class GSICommand(TachyCommand):
 class GeoCOMCommand(TachyCommand):
     MESSAGE_PREFIX = CommunicationConstants.GEOCOM_MESSAGE_PREFIX
 
-    def __init__(self, command: str, label = None, time_out = 2, signal = None, args = []) -> None:
-        super().__init__(command, label, time_out=time_out, signal=signal, args = args)
+    def __init__(self, command: str, label = None, time_out = 2, *args) -> None:
+        super().__init__(command, label, time_out=time_out, args = args)
         self.protocol=CommunicationConstants.GEOCOM
 
     @property
     def bytes(self):
-        message = f"{self.MESSAGE_PREFIX},{str(self.command)},{self.transaction_id}:{gc_constants.CRLF}"
+        message = f"{self.MESSAGE_PREFIX},{str(self.command)},{self.transaction_id}:{','.join(map(str, self.args))}{gc_constants.CRLF}"
         return message.encode('ascii')
 
 
@@ -173,7 +171,7 @@ class MessageQueue(QObject):
             return False
         slot = first_free_slot()
         if slot and self.serial:
-            self.slots[slot] = {"message": msg,
+            self.slots[slot] = {"message": msg.label,
                                 "timeout": time() + msg.time_out}
             msg.set_transaction_id(slot)
             self.serial.write(msg.bytes)
@@ -286,7 +284,7 @@ class Dispatcher(QThread):
         success = queue.append(message)
         return bool(success)
 
-    def register_reply(self, reply: TachyReply) -> tuple:
+    def register_reply(self, reply: TachyReply):
         protocol = reply.get_protocol()
         reply_type = self.reply_types[protocol]
         queue = self.queues[protocol]

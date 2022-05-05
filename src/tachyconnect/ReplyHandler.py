@@ -1,8 +1,10 @@
 from PyQt5.QtCore import pyqtSignal, QObject
 
+from tachyconnect.ts_control import TachyReply
+
 
 class ReplyHandler(QObject):
-    caught_reply = pyqtSignal()
+    caught_reply = pyqtSignal(TachyReply)
     fall_back_signal = pyqtSignal(tuple)
     has_fall_back = False
     slots = {}
@@ -22,9 +24,9 @@ class ReplyHandler(QObject):
     def handle(self, request, reply):
         print(request)
         print(reply)
-        self.caught_reply.emit()
+        self.caught_reply.emit(reply)
         command = request['message']
-        slot = self.slots.get(command.label)
+        slot = self.slots.get(command)
         if slot:
             slot(*reply.get_result())
             return True

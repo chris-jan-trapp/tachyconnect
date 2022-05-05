@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import pyqtSignal
 from matplotlib.pyplot import phase_spectrum
 from ui.main_window import Ui_MainWindow
-from tachyconnect.ts_control import Dispatcher, MessageQueue, CommunicationConstants
+from tachyconnect.ts_control import Dispatcher, MessageQueue, CommunicationConstants, GeoCOMCommand
 from tachyconnect.ReplyHandler import ReplyHandler
 from tachyconnect import TachyRequest, gc_constants
 
@@ -50,6 +50,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dispatcher.timed_out.connect(self.log_append)
         self.dispatcher.log.connect(self.log_append)
         self.dispatcher.non_requested_data.connect(self.surprise)
+        self.reply_handler.caught_reply.connect(self.log_reply)
 
     def request_id(self):
         self.dispatcher.send(TachyRequest.CSV_GetInstrumentName().get_geocom_command())
@@ -101,6 +102,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.log_viewer.setPlainText(self.log_viewer.toPlainText() + "\n" + text)
         scroll_bar = self.log_viewer.verticalScrollBar()
         scroll_bar.setValue(scroll_bar.maximum())
+        
+    def log_reply(self, reply):
+        self.log_append("Reply: " + str(reply))
 
     def undict(self, d):
         self.log_append(str(d))
@@ -127,7 +131,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.log_append("This came in unsolicited:\n" + tadaa)
 
     def toast(self):
-        # beep = GeoCOMCommand(str(gc.BMM_BeepAlarm))
+        # beep = GeoCOMCommand(str(gc_constants.EDM_Laserpointer),"LAS",2,1)
         # self.dispatcher.send(beep)
         # self.test_list = list(TachyRequest.ALL_COMMANDS)
         # self.run_and_log()
