@@ -119,8 +119,10 @@ class Window(QMainWindow, Ui_MainWindow):
         message, reply = message_and_reply[:2]
         print(message, reply)
         request = message['message']
+        results = reply.get_result()
+        result_text = f"{gc_constants.MESSAGES[int(results.pop())]}{', '.join(results)}"
         text = f"""Request: {str(request)}
-        returned: {str(reply)} with: {' '.join([gc_constants.MESSAGES.get(int(code), f'unknown GRC: {code}') for code in reply.get_result()])}"""
+        returned: {str(reply)} with: {result_text}"""
         self.log_append(text)
         
     def dump_capabilities(self):
