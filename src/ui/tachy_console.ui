@@ -11,12 +11,12 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>TachyConsole</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,20,0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,0,0,0">
       <item>
        <widget class="QComboBox" name="dialect_selector"/>
       </item>
@@ -24,7 +24,10 @@
        <widget class="QComboBox" name="command_selector"/>
       </item>
       <item>
-       <widget class="QLineEdit" name="args"/>
+       <widget class="QComboBox" name="args_selector"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget" native="true"/>
       </item>
       <item>
        <widget class="QCommandLinkButton" name="send_command">
@@ -53,7 +56,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTachy">
@@ -64,6 +67,7 @@
     <addaction name="actionidentify"/>
     <addaction name="actionextract_capabilities"/>
     <addaction name="actiondump_implementation_chart"/>
+    <addaction name="actionJoystick"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
@@ -93,6 +97,11 @@
   <action name="actiondump_implementation_chart">
    <property name="text">
     <string>dump implementation chart</string>
+   </property>
+  </action>
+  <action name="actionJoystick">
+   <property name="text">
+    <string>Joystick</string>
    </property>
   </action>
  </widget>

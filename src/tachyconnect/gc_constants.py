@@ -952,6 +952,7 @@ COMMAND_CODES = {'AUS_GetRcsSearchSwitch': 18010,
 # enums
 
 class ON_OFF_TYPE(Enum):  # on/off switch type
+    DESCRIPTION = 'OnOff'
     OFF = 0  # Switch is off
     ON = 1  # Switch is on
 
@@ -1147,3 +1148,10 @@ class EDM_MODE(Enum):
     EDM_AVERAGE_IR = 10  # Standard average measurement
     EDM_AVERAGE_SR = 11  # Short range average measurement
     EDM_AVERAGE_LR = 12  # Long range average measurent
+
+
+# params
+PARAMS = {
+    'TMC_SetInclineSwitch': ON_OFF_TYPE,
+    
+}

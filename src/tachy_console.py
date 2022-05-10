@@ -1,14 +1,16 @@
 from ast import arg
 import sys, json
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QFileDialog
+    QApplication, QMainWindow, QFileDialog, QDialog
 )
 from PyQt5.QtCore import pyqtSignal
 from matplotlib.pyplot import phase_spectrum
 from ui.main_window import Ui_MainWindow
+from tachyconnect.TachyJoystick import TachyJoystick
 from tachyconnect.ts_control import Dispatcher, MessageQueue, CommunicationConstants, GeoCOMCommand
 from tachyconnect.ReplyHandler import ReplyHandler
 from tachyconnect import TachyRequest, gc_constants
+from PyQt5.QtCore import Qt
 
 
 class Window(QMainWindow, Ui_MainWindow):
@@ -38,6 +40,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dialect_selector.addItem(CommunicationConstants.GSI)
         self.command_selector.addItems([klass.__name__ for klass in TachyRequest.ALL_COMMANDS])
         
+        self.tachy_joystick_dlg = TachyJoystick(self.dispatcher, self, Qt.Dialog | Qt.Tool)
+        
         self.connectSignalsSlots()
 
     def connectSignalsSlots(self):
@@ -47,10 +51,14 @@ class Window(QMainWindow, Ui_MainWindow):
         self.actionidentify.triggered.connect(self.request_id)
         self.actionextract_capabilities.triggered.connect(self.extract_capabilities)
         self.actiondump_implementation_chart.triggered.connect(self.dump_capabilities)
+        self.actionJoystick.triggered.connect(self.show_joystick)
         self.dispatcher.timed_out.connect(self.log_append)
         self.dispatcher.log.connect(self.log_append)
         self.dispatcher.non_requested_data.connect(self.surprise)
         self.reply_handler.caught_reply.connect(self.log_reply)
+        
+    def show_joystick(self):
+        self.tachy_joystick_dlg.show()
 
     def request_id(self):
         self.dispatcher.send(TachyRequest.CSV_GetInstrumentName().get_geocom_command())

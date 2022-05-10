@@ -1,3 +1,4 @@
+from socket import timeout
 from PyQt5.QtCore import pyqtSignal, QObject
 
 from tachyconnect.ts_control import TachyReply
@@ -34,3 +35,26 @@ class ReplyHandler(QObject):
             self.fall_back_signal.emit((request, reply))
             return True
         return False
+    
+class CommandChain:
+    def __init__(self, dispatcher):
+        self.dispatcher = dispatcher
+        self.reply_handler = self.dispatcher.reply_handler
+        self.commands = []
+        self.index = 0
+
+    def set_commands(self, *args):
+        self.commands = args
+    
+    def run_chain(self, *results):
+        command = self.commands[self.index]
+        if results:
+            self.reply_handler.unregister_command()
+            self.index += 1
+        if self.index < len(self.commands):
+            command = self.commands[self.index]
+            self.reply_handler.register_command(command, self.run_chain)
+            self.dispatcher.send(command[0](timeout=command[1], args=command[3]).get_geocom_command())
+            
+    def reset(self):
+        self.index = 0

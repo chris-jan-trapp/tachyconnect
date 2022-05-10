@@ -6,6 +6,7 @@ class TachyRequest(QObject):
     gsi_command = ""
     gc_command = ""
     unpacking_keys = {}
+    used_enums = []
 
     def __init__(self, time_out = 2, args = []) -> None:
         super().__init__()
