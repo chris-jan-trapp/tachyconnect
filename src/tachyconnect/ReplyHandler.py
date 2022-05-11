@@ -10,7 +10,7 @@ class ReplyHandler(QObject):
     has_fall_back = False
     slots = {}
 
-    def __init__(self, fall_back = None) -> None:
+    def __init__(self, fall_back = None):
         super().__init__()
         if fall_back:
             self.fall_back_signal.connect(fall_back)

@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from . import gc_constants as gc
 from .ts_control import GeoCOMCommand, GSICommand, CommunicationConstants
 from PyQt5.QtCore import QObject
@@ -8,7 +9,7 @@ class TachyRequest(QObject):
     unpacking_keys = {}
     used_enums = []
 
-    def __init__(self, time_out = 2, args = []) -> None:
+    def __init__(self, time_out = 2, args = []):
         super().__init__()
         self.gc_command = str(gc.COMMAND_CODES.get(self.get_class_name()))
         self.time_out = time_out
@@ -17,7 +18,7 @@ class TachyRequest(QObject):
     def get_class_name(self):
         return self.__class__.__name__
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f"{self.get_class_name()}: {', '.join(self.args) if len(self.args) else 'No args'}, {self.time_out} seconds"
 
     def get_gsi_command(self):
@@ -38,7 +39,12 @@ class COM_Local(TachyRequest):
     
     
 class COM_SetDoublePrecision(TachyRequest):
-    pass
+    def __init__(self, time_out=2, args=[]):
+        super().__init__(time_out, args)
+        self.args = ["15"]
+
+    helptext = "Number of digits right to the comma"
+    args_widget = "QLineEdit"
     
     
 class COM_GetDoublePrecision(TachyRequest):
@@ -46,7 +52,12 @@ class COM_GetDoublePrecision(TachyRequest):
     
     
 class COM_SetSendDelay(TachyRequest):
-    pass
+    def __init__(self, time_out=2, args=[]):
+        super().__init__(time_out, args)
+        self.args = ["0"]
+
+    helptext = "Time of transmission delay in milliseconds"
+    args_widget = "QLineEdit"
 
 
 class COM_GetBinaryAvailable(TachyRequest):
@@ -262,8 +273,12 @@ class CSV_GetUserInstrumentName(TachyRequest):
     
     
 class CSV_SetDateTime(TachyRequest):
-    pass
-    
+    def __init__(self, time_out=2, args=[]):
+        super().__init__(time_out, args)
+        self.args = dt.now().strftime("%Y,%m,%d,%H,%M,%S").split(",")
+
+    helptext = ["Year", "Month", "Day", "Hour", "Minute", "Second"]
+    args_widget = "QLineEdit"
     
 class CSV_GetDateTime(TachyRequest):
     pass
@@ -362,7 +377,23 @@ class AUT_MakePositioning4(TachyRequest):
     
     
 class AUT_ChangeFace(TachyRequest):
-    pass
+    def __init__(self, time_out=2, args=[]):
+        super().__init__(time_out, args)
+        # args dict with enum:default values
+        self.args = {gc.AUT_POSMODE:gc.AUT_POSMODE.AUT_NORMAL, gc.AUT_ATRMODE:gc.AUT_ATRMODE.AUT_TARGET, "bDummy":"0"}
+    helptext = ["""\
+Position mode:
+AUT_NORMAL: uses the current value of the compensator.
+For values >25GON positioning might tend to inexact.
+AUT_PRECISE: tries to measure exact inclination of target.
+Tends to long position time
+(check AUT_TIMEOUT and/or COM-time out if necessary).""",
+"""Mode of ATR:
+AUT_POSITION: conventional position to other face.
+AUT_TARGET: tries to position onto a target in the destination area.
+This set is only possible if ATR exists and is activated.""", 
+"""It’s reserved for future use, set bDummy always to FALSE"""]
+    args_widget = "QComboBox"
     
     
 class AUT_ChangeFace4(TachyRequest):

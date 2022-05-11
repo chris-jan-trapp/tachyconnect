@@ -1,7 +1,7 @@
 from ast import arg
 import sys, json
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QFileDialog, QDialog
+    QApplication, QMainWindow, QFileDialog, QDialog, QLineEdit, QComboBox
 )
 from PyQt5.QtCore import pyqtSignal
 from matplotlib.pyplot import phase_spectrum
@@ -10,7 +10,7 @@ from tachyconnect.TachyJoystick import TachyJoystick
 from tachyconnect.ts_control import Dispatcher, MessageQueue, CommunicationConstants, GeoCOMCommand
 from tachyconnect.ReplyHandler import ReplyHandler
 from tachyconnect import TachyRequest, gc_constants
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QVariant
 
 
 class Window(QMainWindow, Ui_MainWindow):
@@ -39,10 +39,57 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dialect_selector.addItem(CommunicationConstants.GEOCOM)
         self.dialect_selector.addItem(CommunicationConstants.GSI)
         self.command_selector.addItems([klass.__name__ for klass in TachyRequest.ALL_COMMANDS])
+        self.command_selector.activated.connect(self.add_args_widget)
         
         self.tachy_joystick_dlg = TachyJoystick(self.dispatcher, self, Qt.Dialog | Qt.Tool)
         
+        self.command_args_widget = []  # array for multiple widgets
+        
         self.connectSignalsSlots()
+    
+    # add the appropriate args widget (QComboBox / QLineEdit) when a command is selected
+    def add_args_widget(self):
+        # remove widget if there is one already
+        if self.command_args_widget:
+            print("widget: ", self.command_args_widget)
+            for widget in self.command_args_widget:
+                widget.setParent(None)
+                self.horizontalLayout.removeWidget(widget)
+            self.command_args_widget = []
+        # init class
+        command_class = eval("TachyRequest." + self.command_selector.currentText())()
+        #command_class = self.commands_by_name[self.command_selector.currentText()]
+        print("command class: ", command_class.args_widget)
+        # todo: remove hasattr when every class has property
+        # create widget from class property 'args_widget' and add helptext
+        if hasattr(command_class, 'args_widget'):
+            # create widgets equal to number of arguments
+            for i in range(len(command_class.args)):
+                self.command_args_widget.append(eval(getattr(command_class, 'args_widget'))())
+                widget = self.command_args_widget[i]
+                widget_type = widget.__class__.__name__
+                # QLineEdit settings - args = list
+                if widget_type == "QLineEdit":
+                    # add tooltip
+                    widget.setToolTip(command_class.helptext[i] if hasattr(command_class, 'helptext') else '')
+                    # set default arguments
+                    widget.setText(str(command_class.args[i]) if hasattr(command_class, 'args') else '')
+                # QComboBox settings - args = dict
+                elif widget_type == "QComboBox":
+                    # enum or string argument
+                    key = list(command_class.args.keys())[i]
+                    if type(key) == str:
+                        widget.setToolTip(command_class.helptext[i] if hasattr(command_class, 'helptext') else '')
+                        widget.addItem(key, list(command_class.args.values())[i])
+                    else:
+                        for arg in key:
+                            widget.setToolTip(command_class.helptext[i] if hasattr(command_class, 'helptext') else '')
+                            widget.addItem(arg.name, list(command_class.args.values())[i].value)
+
+                # insert widget to layout before send button
+                self.horizontalLayout.insertWidget(len(self.horizontalLayout)-1, widget)
+        else:
+            return
 
     def connectSignalsSlots(self):
         self.action_Quit.triggered.connect(self.close)
@@ -154,6 +201,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # self.test_list = list(TachyRequest.ALL_COMMANDS)
         # self.run_and_log()
         command = self.commands_by_name[self.command_selector.currentText()]
+        # todo: get args from self.command_args_widget array
         args = self.args.text().strip().split(';')
         if self.dialect_selector.currentText() == CommunicationConstants.GSI:
             self.dispatcher.send(command(args = args).get_gsi_command())

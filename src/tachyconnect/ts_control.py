@@ -279,7 +279,7 @@ class Dispatcher(QThread):
             description = f"Timed out: {str(list(timed_out))}"
             self.timed_out.emit(description)
 
-    def send(self, message: TachyCommand) -> bool:
+    def send(self, message: TachyCommand):
         queue = self.queues[message.protocol]
         success = queue.append(message)
         return bool(success)

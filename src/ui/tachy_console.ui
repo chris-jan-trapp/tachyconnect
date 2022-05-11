@@ -16,18 +16,12 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,0,0,0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,0">
       <item>
        <widget class="QComboBox" name="dialect_selector"/>
       </item>
       <item>
        <widget class="QComboBox" name="command_selector"/>
-      </item>
-      <item>
-       <widget class="QComboBox" name="args_selector"/>
-      </item>
-      <item>
-       <widget class="QWidget" name="widget" native="true"/>
       </item>
       <item>
        <widget class="QCommandLinkButton" name="send_command">
