@@ -951,8 +951,12 @@ COMMAND_CODES = {'AUS_GetRcsSearchSwitch': 18010,
 
 # enums
 
+# KInd of universal
+class BOOLEAN_TYPE(Enum):
+    FALSE = 0
+    TRUE = 1
+    
 class ON_OFF_TYPE(Enum):  # on/off switch type
-    DESCRIPTION = 'OnOff'
     OFF = 0  # Switch is off
     ON = 1  # Switch is on
 

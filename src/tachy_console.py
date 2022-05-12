@@ -1,4 +1,5 @@
 from ast import arg
+from enum import Enum
 import sys, json
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QFileDialog, QDialog, QLineEdit, QComboBox
@@ -51,45 +52,31 @@ class Window(QMainWindow, Ui_MainWindow):
     def add_args_widget(self):
         # remove widget if there is one already
         if self.command_args_widget:
-            print("widget: ", self.command_args_widget)
             for widget in self.command_args_widget:
                 widget.setParent(None)
                 self.horizontalLayout.removeWidget(widget)
             self.command_args_widget = []
-        # init class
-        command_class = eval("TachyRequest." + self.command_selector.currentText())()
-        #command_class = self.commands_by_name[self.command_selector.currentText()]
-        print("command class: ", command_class.args_widget)
-        # todo: remove hasattr when every class has property
-        # create widget from class property 'args_widget' and add helptext
-        if hasattr(command_class, 'args_widget'):
-            # create widgets equal to number of arguments
-            for i in range(len(command_class.args)):
-                self.command_args_widget.append(eval(getattr(command_class, 'args_widget'))())
-                widget = self.command_args_widget[i]
-                widget_type = widget.__class__.__name__
-                # QLineEdit settings - args = list
-                if widget_type == "QLineEdit":
-                    # add tooltip
-                    widget.setToolTip(command_class.helptext[i] if hasattr(command_class, 'helptext') else '')
-                    # set default arguments
-                    widget.setText(str(command_class.args[i]) if hasattr(command_class, 'args') else '')
-                # QComboBox settings - args = dict
-                elif widget_type == "QComboBox":
-                    # enum or string argument
-                    key = list(command_class.args.keys())[i]
-                    if type(key) == str:
-                        widget.setToolTip(command_class.helptext[i] if hasattr(command_class, 'helptext') else '')
-                        widget.addItem(key, list(command_class.args.values())[i])
-                    else:
-                        for arg in key:
-                            widget.setToolTip(command_class.helptext[i] if hasattr(command_class, 'helptext') else '')
-                            widget.addItem(arg.name, list(command_class.args.values())[i].value)
-
-                # insert widget to layout before send button
-                self.horizontalLayout.insertWidget(len(self.horizontalLayout)-1, widget)
-        else:
-            return
+        
+        command_class = self.commands_by_name[self.command_selector.currentText()]
+        self.command_selector.setToolTip(command_class.description)
+        
+        
+        for i, default_value in enumerate(command_class.get_defaults()):
+            if type(default_value) == str:
+                widget = QLineEdit()
+                widget.setText(default_value)
+            if isinstance(default_value, Enum):
+                our_enum = default_value.__class__
+                widget = QComboBox()
+                for j, entry in enumerate(our_enum):
+                    widget.addItem(entry.name, str(entry.value))
+                    
+                    if entry == default_value:
+                        widget.setCurrentIndex(j)
+                
+            widget.setToolTip(command_class.get_helptext(i))
+            self.command_args_widget.append(widget)
+            self.horizontalLayout.insertWidget(len(self.horizontalLayout)-1, widget)
 
     def connectSignalsSlots(self):
         self.action_Quit.triggered.connect(self.close)
@@ -175,7 +162,7 @@ class Window(QMainWindow, Ui_MainWindow):
         print(message, reply)
         request = message['message']
         results = reply.get_result()
-        result_text = f"{gc_constants.MESSAGES[int(results.pop())]}{', '.join(results)}"
+        result_text = f"{gc_constants.MESSAGES[int(results.pop(0))]}{', '.join(results)}"
         text = f"""Request: {str(request)}
         returned: {str(reply)} with: {result_text}"""
         self.log_append(text)
@@ -202,11 +189,20 @@ class Window(QMainWindow, Ui_MainWindow):
         # self.run_and_log()
         command = self.commands_by_name[self.command_selector.currentText()]
         # todo: get args from self.command_args_widget array
-        args = self.args.text().strip().split(';')
-        if self.dialect_selector.currentText() == CommunicationConstants.GSI:
-            self.dispatcher.send(command(args = args).get_gsi_command())
-        if self.dialect_selector.currentText() == CommunicationConstants.GEOCOM:
-            self.dispatcher.send(command(args = args).get_geocom_command())
+        #args = self.args.text().strip().split(';')
+        #args = ";".join([str(widget.currentData()) for widget in self.command_args_widget])
+        def get_arg_from_widget(widget):
+            if isinstance(widget, QLineEdit):
+                return widget.text().strip()
+            if isinstance(widget, QComboBox):
+                return str(widget.currentData())
+        args = [get_arg_from_widget(widget) for widget in self.command_args_widget]
+        print("Args: ", ";".join(args))
+        # if self.dialect_selector.currentText() == CommunicationConstants.GSI:
+        #     self.dispatcher.send(command(args = args).get_gsi_command())
+        # if self.dialect_selector.currentText() == CommunicationConstants.GEOCOM:
+        #     self.dispatcher.send(command(args = args).get_geocom_command())
+        #     print("Sent ascii: " + str(command(args = args).get_geocom_command()))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

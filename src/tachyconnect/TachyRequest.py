@@ -7,7 +7,7 @@ class TachyRequest(QObject):
     gsi_command = ""
     gc_command = ""
     unpacking_keys = {}
-    used_enums = []
+    defaults = []
 
     def __init__(self, time_out = 2, args = []):
         super().__init__()
@@ -25,363 +25,569 @@ class TachyRequest(QObject):
         if self.gsi_command == "":
             raise NotImplementedError(f'No GSI command for {self.get_class_name()}')
         return GSICommand(self.gsi_command, self.get_class_name(), self.time_out, *self.args)
-    
+
     def get_geocom_command(self):
         return GeoCOMCommand(self.gc_command, self.get_class_name(), self.time_out, *self.args)
 
+    @classmethod
+    def get_defaults(cls):
+        return cls.defaults
+
+    @classmethod
+    def get_helptext(cls, i):
+        if i < len(cls.helptexts):
+            return cls.helptexts[i]
+        else:
+            return ''
+
 
 class COM_NullProc(TachyRequest):
-    pass
-    
-    
+    description = """Check Communication
+This function does not provide any functionality except of checking if the
+communication is up and running."""
+
+
 class COM_Local(TachyRequest):
-    pass
-    
-    
+    description = """Switch TPS1100 into Local Mode
+Leaves on-line mode and switches TPS1100 into local mode. If in local
+mode, no communication will take place. Any attempt of sending data will
+be ignored. Changing local into online mode can be done manually only."""
+
+
 class COM_SetDoublePrecision(TachyRequest):
-    def __init__(self, time_out=2, args=[]):
-        super().__init__(time_out, args)
-        self.args = ["15"]
+    description = """Set Double Precision Setting
+This function sets the precision - number of digits to the right of the
+decimal - when double floating-point values are transmitted. The TPS’
+system software always calculates with highest possible precision. The
+default precision is fifteen digits. However, if this precision is not needed
+then transmission of double data (ASCII transmission) can be speeded up
+by choosing a lower precision. Especially when many double values are
+transmitted this may enhance the operational speed. The usage of this
+function is only meaningful if the communication is set to ASCII
+transmission mode. In the case of an ASCII request, the precision of the
+server side will be set. Notice that trailing Zeros will not be sent by the
+server and values may be rounded. E.g. if precision is set to 3 and the exact
+value is 1.99975 the resulting value will be 2.0
+Note: With this function one can decrease the accuracy of the delivered
+values."""
+    defaults = ["15"]
+    helptexts = ["Number of digits right to the comma"]
 
-    helptext = "Number of digits right to the comma"
-    args_widget = "QLineEdit"
-    
-    
+
 class COM_GetDoublePrecision(TachyRequest):
-    pass
-    
-    
-class COM_SetSendDelay(TachyRequest):
-    def __init__(self, time_out=2, args=[]):
-        super().__init__(time_out, args)
-        self.args = ["0"]
+    description = """Get Double Precision Setting
+This function returns the precision - number of digits to the right of the
+decimal point - when double floating-point values are transmitted. The
+usage of this function is only meaningful if the communication is set to
+ASCII transmission mode. Precision is equal in both transmission
+directions. In the case of an ASCII request, the precision of the server side
+will be returned."""
 
-    helptext = "Time of transmission delay in milliseconds"
-    args_widget = "QLineEdit"
+
+class COM_SetSendDelay(TachyRequest):
+    description = """Set Reply Delay
+The GeoCOM implementation of the server has been optimised for speed.
+If the server reacts to fast, then it may happen, that the client is not able to
+receive the reply (complete and) correctly. This RPC inserts a delay before
+the server responds to a request. This might be of interest especially for
+radio data links. Reset to no delay can be done with nSendDelay = 0."""
+    defaults = ["0"]
+    helptext = ["Time of transmission delay in milliseconds"]
 
 
 class COM_GetBinaryAvailable(TachyRequest):
-    pass
-    
-    
+    description = """Get Binary Attribute of Server
+This function gets the ability information about the server to handle binary
+communication. Since TPS1100 Release 2.00 the client may make requests in
+binary format which speeds up the communication by about 40-50%."""
+
+
 class COM_SetBinaryAvailable(TachyRequest):
-    pass
-    
-    
+    description = """Set Binary Attribute of Server
+This function sets the ability of the server to handle binary communication.
+With this function, one can force to communicate in ASCII only. During
+initialisation, the client checks if binary communication is enabled /
+possible or not which depends on this flag. Binary data format is not
+supported yet in GeoCOM Versions below 2.0."""
+    defaults = [gc.BOOLEAN_TYPE.TRUE]
+    helptexts = ["""TRUE: enable binary operation.
+FALSE: enable ASCII operation only."""]
+
+
 class COM_GetSWVersion(TachyRequest):
     gsi_command = "GET/I/WI593;"
-    
-    
+    description = """Retrieve Server Release Information
+This function retrieves the current GeoCOM release (release, version and
+subversion) of the server."""
+
+
 class COM_SwitchOnTPS(TachyRequest):
     gsi_command = "a"
-    
-    
+    description = """Switch on TPS instrument
+This function switches on the TPS1100 instrument and put it into remote
+mode. It can also be used to switch from sleep into remote mode."""
+    defaults = [gc.COM_TPS_STARTUP_MODE.COM_TPS_STARTUP_REMOTE]
+    helptexts = """Run mode - use COM_TPS_STARTUP_REMOTE only!
+COM_TPS_STARTUP_LOCAL will yield to erroneous behaviour."""
+
+
 class COM_SwitchOffTPS(TachyRequest):
     gsi_command = "b"
-    
-    
+    description = """Switch off TPS1100 or Set Sleep Mode
+This function switches off the TPS1100 instrument or put it into sleep
+mode."""
+    defaults = [gc.COM_TPS_STOP_MODE.COM_TPS_STOP_SLEEP]
+    helptexts = ["Stop mode"]
+
+
 class COM_EnableSignOff(TachyRequest):
-    pass
-    
-    
+    description = """Enable Remote Mode Logging
+This function enables logging if the Remote mode changes. See also
+section 3.5 TPS1100 Instrument Modes of Operation for further
+explanations."""
+    defaults = [gc.BOOLEAN_TYPE.FALSE]
+    helptexts = ["TRUE: enable mode logging"]
+
+
 class EDM_Laserpointer(TachyRequest):
-    pass
-    
-    
+    description = """Switch on/off laserpointer
+Laserpointer is only available in theodolites which supports distance
+measurement without reflector."""
+    defaults=[gc.ON_OFF_TYPE.ON]
+    helptexts=["""
+ON - switch Laserpointer on
+OFF - switch Laserpointer off"""]
+
+
 class EDM_SetBumerang(TachyRequest):
-    pass
-    
-    
+    description = """Switch boomerang filter on/off
+The boomerang filter is not available for some add-on EDM’s.
+Deleted in TPS1100"""
+    defaults = [gc.ON_OFF_TYPE.OFF]
+    helptexts = ["""ON - switch boomerang filter on
+OFF - switch boomerang filter off"""]
+
+
 class EDM_On(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class EDM_SetTrkLightSwitch(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class EDM_SetTrkLightBrightness(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class EDM_GetTrkLightSwitch(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class EDM_GetTrkLightBrightness(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class EDM_GetBumerang(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class EDM_GetEglIntensity(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class EDM_SetEglIntensity(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetAngle1(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetInclineSwitch(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetInclineSwitch(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_DoMeasure(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetStation(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetStation(TachyRequest):
-    pass
-     
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetHeight(TachyRequest):
     gsi_command = "GET/I/WI88"
-    
-    
+
+
 class TMC_SetHeight(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetAngSwitch(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetAngSwitch(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetHandDist(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetEdmMode(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetEdmMode(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetSignal(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetPrismCorr(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetPrismCorr(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetFace(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetAtmCorr(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetAtmCorr(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetRefractiveCorr(TachyRequest):
-    pass
-   
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetRefractiveCorr(TachyRequest):
     gsi_command = "GET/I/WI538"
-    
-    
+
+
 class TMC_GetCoordinate(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetCoordinate1(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetRefractiveMethod(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetRefractiveMethod(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetAngle5(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetSimpleMea(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_SetOrientation(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_IfDataAzeCorrError(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_IfDataIncCorrError(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetSimpleCoord(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_QuickDist(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class TMC_GetSlopeDistCorr(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CSV_GetInstrumentNo(TachyRequest):
-    pass
-      
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CSV_GetInstrumentName(TachyRequest):
     gsi_command = "GET/I/WI13"
-    
-    
-class CSV_SetUserInstrumentName(TachyRequest):
-    pass
-    
-    
-class CSV_GetUserInstrumentName(TachyRequest):
-    pass
-    
-    
-class CSV_SetDateTime(TachyRequest):
-    def __init__(self, time_out=2, args=[]):
-        super().__init__(time_out, args)
-        self.args = dt.now().strftime("%Y,%m,%d,%H,%M,%S").split(",")
 
-    helptext = ["Year", "Month", "Day", "Hour", "Minute", "Second"]
-    args_widget = "QLineEdit"
-    
+
+class CSV_SetUserInstrumentName(TachyRequest):
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
+class CSV_GetUserInstrumentName(TachyRequest):
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
+class CSV_SetDateTime(TachyRequest):
+    helptexts = ["Year", "Month", "Day", "Hour", "Minute", "Second"]
+    #args_widget = "QLineEdit"
+
+    @classmethod
+    def get_defaults(cls):
+        return dt.now().strftime("%Y,%m,%d,%H,%M,%S").split(",")
+
 class CSV_GetDateTime(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CSV_GetVBat(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CSV_GetVMem(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CSV_GetIntTemp(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CSV_GetSWVersion(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CSV_GetSWVersion2(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CSV_GetDeviceConfig(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class MOT_StartController(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class MOT_StopController(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class MOT_SetVelocity(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class MOT_ReadLockStatus(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class WIR_GetRecFormat(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class WIR_SetRecFormat(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_SetTol(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_ReadTol(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_SetTimeout(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_ReadTimeout(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_LockIn(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_SetATRStatus(TachyRequest):
-    pass
-    
-    
+    defaults = []
+    helptexts = []
+
+
 class AUT_GetATRStatus(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_SetLockStatus(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_GetLockStatus(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_MakePositioning(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_MakePositioning4(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_ChangeFace(TachyRequest):
-    def __init__(self, time_out=2, args=[]):
-        super().__init__(time_out, args)
-        # args dict with enum:default values
-        self.args = {gc.AUT_POSMODE:gc.AUT_POSMODE.AUT_NORMAL, gc.AUT_ATRMODE:gc.AUT_ATRMODE.AUT_TARGET, "bDummy":"0"}
-    helptext = ["""\
+    defaults = [gc.AUT_POSMODE.AUT_NORMAL,
+                gc.AUT_ATRMODE.AUT_TARGET,
+                gc.BOOLEAN_TYPE.FALSE]
+    helptexts = ["""\
 Position mode:
 AUT_NORMAL: uses the current value of the compensator.
 For values >25GON positioning might tend to inexact.
@@ -391,179 +597,290 @@ Tends to long position time
 """Mode of ATR:
 AUT_POSITION: conventional position to other face.
 AUT_TARGET: tries to position onto a target in the destination area.
-This set is only possible if ATR exists and is activated.""", 
+This set is only possible if ATR exists and is activated.""",
 """It’s reserved for future use, set bDummy always to FALSE"""]
-    args_widget = "QComboBox"
-    
-    
-class AUT_ChangeFace4(TachyRequest):
-    pass
-    
-    
+
+
+class AUT_ChangeFace4(AUT_ChangeFace):
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_Search(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_Search2(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_GetFineAdjustMode(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_SetFineAdjustMode(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_FineAdjust(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_FineAdjust3(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_GetUserSpiral(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_SetUserSpiral(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_GetSearchArea(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_SetSearchArea(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_PS_SetRange(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_PS_EnableRange(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_PS_SearchNext(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUT_PS_SearchWindow(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BMM_BeepOn(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BMM_BeepOff(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BMM_BeepNormal(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BMM_BeepAlarm(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class CTL_GetUpCounter(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class SUP_GetConfig(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class SUP_SetConfig(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class SUP_SwitchLowTempControl(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_GetLastDisplayedError(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_SetPrismType(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_GetPrismType(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_MeasDistanceAngle(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_GetMeasPrg(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_SetMeasPrg(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_SearchTarget(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_SetTargetType(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_GetTargetType(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_GetPrismDef(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class BAP_SetPrismDef(TachyRequest):
-    pass
-    
-    
-class AUS_SetUserAtrState(TachyRequest):
-    pass
-    
-    
+    description = """"""
+    defaults=[""""""]
+    helptexts=[""""""]
+
+
 class AUS_GetUserAtrState(TachyRequest):
-    pass
-    
-    
-class AUS_SetUserLockState(TachyRequest):
-    pass
-    
-    
+    description = """Get the status of the ATR mode
+Get the current status of the ATR mode on TCA instruments. This
+command does not indicate whether the ATR has currently acquired a
+prism. It replaces the function AUT_GetAtrStatus."""
+
+
+class AUS_SetUserAtrState(TachyRequest):
+    description = """Set the status of the ATR mode
+Activate respectively deactivate the ATR mode.
+Activate ATR mode:
+The ATR mode is activated and the LOCK mode (if sets) will be reset
+automatically also."""
+    defaults = [gc.ON_OFF_TYPE.OFF]
+    helptexts = ["State of the ATR mode"]
+
+
 class AUS_GetUserLockState(TachyRequest):
-    pass
-    
-    
+    description = """Get the status of the lock switch
+This command gets the current LOCK switch. This command is valid for
+TCA instruments only and does not indicate whether the ATR has a prism
+in lock or not.
+With the function MOT_ReadLockStatus you can find out whether a
+target is locked or not.
+This command is valid for TCA instruments only. It replaces the function
+AUT_GetLockStatu"""
+
+
+class AUS_SetUserLockState(TachyRequest):
+    description = """Set the lock status.
+Status ON:
+The target tracking functionality is available but not activated. In order to
+activate target tracking, see the function AUT_LockIn. The ATR mode will
+be set automatically.
+Status OFF:
+A running target tracking will be aborted and the manual driving wheel is
+activated. The ATR mode will be not reset automatically respectively keep
+unchanged.
+This command is valid for TCA instruments only. It replaces the function
+AUT_SetLockStatus."""
+    defaults = [gc.ON_OFF_TYPE.OFF]
+    helptexts = ["State of the ATR lock switch"]
+
+
 class AUS_SwitchRcsSearch(TachyRequest):
-    pass
-    
-    
+    description = """Set the RCS searching mode switch.
+If the RCS style searching is enabled, then the extended for
+BAP_SearchTarget or after a loss of lock is activated.
+This command is valid for TCA instruments only."""
+    defaults = [gc.ON_OFF_TYPE.OFF]
+    helptexts = ["Get RCS-Searching mode switch"]
+
+
 class AUS_GetRcsSearchSwitch(TachyRequest):
-    pass
-    
-    
-class IOS_BeepOff(TachyRequest):
-    pass
-    
-    
+    description = """Get RCS-Searching mode switch
+This command gets the current RCS-Searching mode switch.
+If RCS style searching is enabled, then the extended searching for
+BAP_SearchTarget or after a loss of lock is activated.
+This command is valid for TCA instruments only."""
+
+
 class IOS_BeepOn(TachyRequest):
-    pass
-    
-    
+    description = """Start a beep-signal
+This function switches on the beep-signal with the intensity nIntens. If a
+continuous signal is active, it will be stopped first. Turn off the beeping
+device with IOS_BeepOff"""
+    defaults = ["100"]
+    helptexts = ["""Intensity of the beep-signal (volume)
+expressed as a percentage.
+Default value is 100 %"""]
+
+
+class IOS_BeepOff(TachyRequest):
+    description = """Stop active beep-signal
+This function switches off the beep-signal."""
+
 
 ALL_COMMANDS = [
     COM_NullProc,
@@ -692,7 +1009,7 @@ ALL_COMMANDS = [
     AUS_GetRcsSearchSwitch,
     IOS_BeepOff,
     IOS_BeepOn]
-    
+
 if __name__=="__main__":
     set_station = TMC_SetStation()
     print(f"Code for set station: {set_station.gc_command}")
