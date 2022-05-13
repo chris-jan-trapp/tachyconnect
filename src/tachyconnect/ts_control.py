@@ -10,7 +10,7 @@ from . import gc_constants, GSI_Parser
 class CommunicationConstants:
     GSI = "GSI"
     GEOCOM = "geoCOM"
-    
+
     GSI_MESSAGE_PREFIX = "?"
     GEOCOM_MESSAGE_PREFIX = "%R1Q"
 
@@ -41,20 +41,20 @@ class TachyCommand(QObject):
         self.transaction_id = 0
         self.time_out = time_out
         self.label = command if label is None else label
-            
+
 
     def parse_reply(self, reply_bytes: bytes) -> str:
         return reply_bytes.decode('ascii')
-    
+
     def set_transaction_id(self, id: int) -> None:
         self.transaction_id = id
-    
+
     def get_transaction_id(self) -> int:
         return self.transaction_id
 
     def get_protocol(self):
         return self.protocol
-    
+
     def __str__(self):
         try:
             return f"{self.protocol}: {self.command}, {str(self.args)}"
@@ -79,7 +79,7 @@ class GSICommand(TachyCommand):
 
         message = f"{self.command}{params}{gc_constants.CRLF}"
         return message.encode('ascii')
- 
+
 
 class GeoCOMCommand(TachyCommand):
     MESSAGE_PREFIX = CommunicationConstants.GEOCOM_MESSAGE_PREFIX
@@ -98,10 +98,10 @@ class TachyReply:
     def __init__(self, bites: bytes) -> None:
         self.bites = bites
         self.ascii = bites.data().decode('ascii')
-        
+
     def __str__(self) -> str:
         return self.ascii
-    
+
     def get_transaction_id(self) -> int:
         raise ValueError("This base type is not supposed to have an id.")
 
@@ -111,7 +111,7 @@ class TachyReply:
         if self.ascii.startswith(CommunicationConstants.GEOCOM_REPLY_PREFIX) or self.ascii[:4] == "@W127":
             return CommunicationConstants.GEOCOM
         raise ValueError(f"Tachymeter reply uses unknown protocoll: {self.ascii}")
-    
+
     def get_result(self):
         raise NotImplemented("Has to be implemented for each subclass.")
 
@@ -132,7 +132,7 @@ class GSIReply(TachyReply):
 
     def get_result(self):
         return GSI_Parser.parse(self.ascii)
-        
+
 
 class GeoCOMReply(TachyReply):
     PREFIX = CommunicationConstants.GEOCOM_REPLY_PREFIX
@@ -151,7 +151,7 @@ class GeoCOMReply(TachyReply):
 
 
 class MessageQueue(QObject):
-    non_requested_data = pyqtSignal(str) 
+    non_requested_data = pyqtSignal(str)
     def __init__(self, n_slots=7):
         super().__init__()
         self.indices = list(range(1, n_slots + 1))
@@ -202,7 +202,7 @@ class MessageQueue(QObject):
 
 class Dispatcher(QThread):
     pollingInterval = 1000
-    serial_disconnected = pyqtSignal(str) 
+    serial_disconnected = pyqtSignal(str)
     timed_out = pyqtSignal(str)
     log = pyqtSignal(str)
     non_requested_data = pyqtSignal(str)
@@ -242,7 +242,7 @@ class Dispatcher(QThread):
                 ping.fire()
         moin()
         print(port_names)
-    
+
     def start(self):
         self.pollingTimer.start(self.pollingInterval)
         loop = QEventLoop()
@@ -295,7 +295,7 @@ class Dispatcher(QThread):
             associated with any request. These are handled by the 'non_requested_data'
             signal."""
             pass
-    
+
 class Ping(QThread):
     found_tachy = pyqtSignal(str)
     found_something = pyqtSignal(str)
@@ -318,7 +318,7 @@ class Ping(QThread):
         self.timer.start(self.timeout)
         loop = QEventLoop()
         loop.exec_()
-        
+
     def read(self):
         self.pinging.emit(f"Pinging {self.serial.portName()}")
         if self.serial.canReadLine():

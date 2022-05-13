@@ -691,7 +691,7 @@ CODES = {0: "GRC_OK",
          13059: "GRC_FTR_INVALIDINPUT",
          13060: "GRC_FTR_MISSINGSETUP",
          }
-         
+
 AUS_GetRcsSearchSwitch = 18010
 AUS_GetUserAtrState = 18006
 AUS_GetUserLockState = 18008
@@ -955,18 +955,22 @@ COMMAND_CODES = {'AUS_GetRcsSearchSwitch': 18010,
 class BOOLEAN_TYPE(Enum):
     FALSE = 0
     TRUE = 1
-    
+
 class ON_OFF_TYPE(Enum):  # on/off switch type
     OFF = 0  # Switch is off
     ON = 1  # Switch is on
 
 # AUT
+class AUT_DIRECTION(Enum):
+    AUT_CLOCKWISE = 1, # direction clockwise.
+    AUT_ANTICLOCKWISE = -1 # direction counter clockwise.
+
 # Position Precision
 class AUT_POSMODE(Enum):
     AUT_NORMAL = 0  # fast positioning mode
     AUT_PRECISE = 1  # exact positioning mode
     # note: can distinctly claim more time for the positioning
-    
+
 # Fine-adjust Position Mode
 class AUT_ADJMODE(Enum):
 # Possible settings of the positioning
@@ -980,7 +984,7 @@ class AUT_ADJMODE(Enum):
 class AUT_ATRMODE(Enum):  # Possible modes of the target recognition
     AUT_POSITION = 0  # Positioning to the hz- and v-angle
     AUT_TARGET = 1  # Positioning to a target in the environment of the hz- and v-angle.
-    
+
 # BAP - Measurement Modes
 class BAP_MEASURE_PRG(Enum):
     BAP_NO_MEAS = 0  # no measurements, take last one
@@ -1011,7 +1015,7 @@ class BAP_PRISMTYPE(Enum):
     BAP_PRISM_USER1 = 4  # prism type: user1
     BAP_PRISM_USER2 = 5  # prism type: user2
     BAP_PRISM_USER3 = 6  # prism type: user3
-    
+
 # BAP - Reflector type definition
 class BAP_REFLTYPE(Enum):
     BAP_REFL_UNDEF = 0  # reflector not defined
@@ -1034,7 +1038,7 @@ class COM_BAUD_RATE(Enum):
     COM_BAUD_9600 = 2
     COM_BAUD_4800 = 3
     COM_BAUD_2400 = 4
-    
+
 class COM_TPS_STATUS(Enum):
     COM_TPS_OFF = 0  # switched off
     COM_TPS_SLEEPING = 1  # sleep mode
@@ -1085,7 +1089,7 @@ class TPS_DEVICE_TYPE(Enum):
     TPS_DEVICE_LPNT= 0x00200  # Laserpointer
     TPS_DEVICE_RL_EXT = 0x00400  # Red laser with extended range
     TPS_DEVICE_SIM = 0x04000  # runs on simulation, not on hardware
-    
+
 # EDM - Intensity of Electronic Guidelight
 class EDM_EGLINTENSITY_TYPE(Enum):
     EDM_EGLINTEN_OFF = 0,
@@ -1098,7 +1102,7 @@ class MOT_LOCK_STATUS(Enum):
     MOT_LOCKED_OUT = 0  # locked out
     MOT_LOCKED_IN = 1  # locked in
     MOT_PREDICTION = 2  # prediction mode
-    
+
 # MOT - Controller Stop Mode
 class MOT_STOPMODE(Enum):
     MOT_NORMAL = 0  # slow down with current acceleration
@@ -1153,9 +1157,15 @@ class EDM_MODE(Enum):
     EDM_AVERAGE_SR = 11  # Short range average measurement
     EDM_AVERAGE_LR = 12  # Long range average measurent
 
+# Used before TPS1100 to set tracking light brightness
+class EDM_TRKLIGHT_BRIGHTNESS(Enum):
+    EDM_LOW_BRIGHTNESS = 0
+    EDM_MEDIUM_BRIGHTNESS = 1
+    EDM_HIGH_BRIGHTNESS = 2
 
-# params
-PARAMS = {
-    'TMC_SetInclineSwitch': ON_OFF_TYPE,
-    
-}
+
+class EDM_EGLINTENSITY_TYPE(Enum):
+    EDM_EGLINTEN_OFF = 0
+    EDM_EGLINTEN_LOW = 1
+    EDM_EGLINTEN_MID = 2
+    EDM_EGLINTEN_HIGH = 3

@@ -1,5 +1,5 @@
 from socket import timeout
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSignal, QObject, QEventLoop
 
 from tachyconnect.ts_control import TachyReply
 
@@ -15,7 +15,7 @@ class ReplyHandler(QObject):
         if fall_back:
             self.fall_back_signal.connect(fall_back)
             self.has_fall_back = True
-    
+
     def register_command(self, command_class, slot):
         self.slots[command_class.__name__] = slot
 
@@ -35,17 +35,19 @@ class ReplyHandler(QObject):
             self.fall_back_signal.emit((request, reply))
             return True
         return False
-    
+
 class CommandChain:
-    def __init__(self, dispatcher):
+    def __init__(self, dispatcher, *commands):
         self.dispatcher = dispatcher
         self.reply_handler = self.dispatcher.reply_handler
-        self.commands = []
         self.index = 0
+        self.loop = QEventLoop()
+        self.commands = commands
 
     def set_commands(self, *args):
+        print('setting commands: ' + args)
         self.commands = args
-    
+
     def run_chain(self, *results):
         command = self.commands[self.index]
         if results:
@@ -55,7 +57,7 @@ class CommandChain:
             command = self.commands[self.index]
             self.reply_handler.register_command(command.command, self.run_chain)
             self.dispatcher.send(command.command(timeout=command.timeout, args=command.args).get_geocom_command())
-            
+
     def reset(self):
         self.index = 0
 
@@ -64,3 +66,9 @@ class ChainableCommand:
         self.command = command
         self.timeout = timeout
         self.args = args
+        print(self.command)
+        print(self.timeout)
+        print(self.args)
+        print('ChainableCommand ctored.')
+
+

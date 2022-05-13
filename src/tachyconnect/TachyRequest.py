@@ -8,6 +8,7 @@ class TachyRequest(QObject):
     gc_command = ""
     unpacking_keys = {}
     defaults = []
+    description = ""
 
     def __init__(self, time_out = 2, args = []):
         super().__init__()
@@ -92,7 +93,7 @@ receive the reply (complete and) correctly. This RPC inserts a delay before
 the server responds to a request. This might be of interest especially for
 radio data links. Reset to no delay can be done with nSendDelay = 0."""
     defaults = ["0"]
-    helptext = ["Time of transmission delay in milliseconds"]
+    helptexts = ["Time of transmission delay in milliseconds"]
 
 
 class COM_GetBinaryAvailable(TachyRequest):
@@ -169,97 +170,139 @@ OFF - switch boomerang filter off"""]
 
 
 class EDM_On(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Switch on/off EDM
+Normal distance measurement switches on or off the EDM automatically. If
+there is no supply voltage for the EDM, EDM_On also connects it. Normally
+the supply voltage is switched off together with the EDM, unless the
+Tracklight or the diode laser is switched on too, or the permanent power-on-
+mode is set. These functions overlie the functionality of EDM_On and EDM
+cannot be switched off before the Tracklight or the diode laser stops
+working. However, after 10 min the EDM will be switched off.
+Deleted in TPS1100"""
+    defaults=[gc.ON_OFF_TYPE.ON]
+    helptexts=["""ON - switch EDM on
+OFF - switch EDM off"""]
 
 
 class EDM_SetTrkLightSwitch(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Switch on/off tracklight
+The Tracklight must be available for EDM.
+Replaced by: EDM_SetEGLIntensity in TPS1100"""
+    defaults=[gc.ON_OFF_TYPE.ON]
+    helptexts=["""ON - switch on Tracklight
+OFF - switch off Tracklight"""]
 
 
 class EDM_SetTrkLightBrightness(TachyRequest):
-    description = """"""
-    defaults=[""""""]
+    description = """Change intensity of tracklight
+The Tracklight must be available for EDM.
+Replaced by: EDM_SetEGLIntensity in TPS1100"""
+    defaults=[gc.EDM_TRKLIGHT_BRIGHTNESS.EDM_HIGH_BRIGHTNESS]
     helptexts=[""""""]
 
 
 class EDM_GetTrkLightSwitch(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get status of tracklight switch
+The Tracklight must be available for EDM.
+Replaced by: EDM_GetEGLIntensity in TPS1100"""
 
 
 class EDM_GetTrkLightBrightness(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get value of intensity of tracklight
+The Tracklight must be available for EDM.
+Replaced by: EDM_GetEGLIntensity"""
 
 
 class EDM_GetBumerang(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get status of boomerang filter
+Call this function to retrieve the status of the "boomerang filter" (i.e. ON,
+OFF). If the distance is within 60-100 meters and the boomerang filter is
+turned off, wrong measurement results are possible. With the boomerang
+filter turned on, the measurement accuracy can be increased until up to max.
+2.5 cm.
+The boomerang filter is not available for some add-on EDM’s.
+Deleted in TPS1100"""
 
 
 class EDM_GetEglIntensity(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get value of intensity of guide light
+The Electronic Guide Light must be implemented in the theodolite."""
 
 
 class EDM_SetEglIntensity(TachyRequest):
-    description = """"""
-    defaults=[""""""]
+    description = """Change intensity of guide light
+The Electronic Guide Light must be implemented in the theodolite.
+New since TPS1100"""
+    defaults=[gc.EDM_EGLINTENSITY_TYPE.EDM_EGLINTEN_HIGH]
     helptexts=[""""""]
 
 
 class TMC_GetAngle1(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Returns complete angle measurement
+This function carries out an angle measurement and, in dependence of
+configuration, inclination measurement and returns the results. As shown
+the result is very comprehensive. For simple angle measurements use
+TMC_GetAngle5 or TMC_GetSimpleMea instead."""
+    defaults=[gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
+    helptexts=["Inclination sensor measurement mode."]
 
 
 class TMC_SetInclineSwitch(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Switch dual axis compensator on or off
+This function switches the dual axis compensator on or off."""
+    defaults=[gc.ON_OFF_TYPE.ON]
+    helptexts=["Dual axis compensator's state."]
 
 
 class TMC_GetInclineSwitch(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the dual axis compensator's state
+This function returns the current dual axis compensator's state."""
 
 
 class TMC_DoMeasure(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Carries out a distance measurement
+This function carries out a distance measurement in a variety of TMC
+measurement modes like single distance, rapid tracking,... . Please note that
+this command does not output any values (distances). In order to get the
+values you have to use other measurement functions such as
+TMC_GetCoordinate, TMC_GetSimpleMea or TMC_GetAngle.
+The value of the distance measured is kept in the instrument up to the next
+TMC_DoMeasure command where a new distance is requested or the
+distance is clear by the measurement program TMC_CLEAR.
+Note: If you perform a distance measurement with the measure program
+TMC_DEF_DIST, the distance sensor will be work with the set EDM
+mode, see TMC_SetEdmMode."""
+    defaults = [gc.TMC_MEASURE_PRG.TMC_DO_MEASURE, gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
+    helptexts = ["TMC measurement mode.", "Inclination sensor measurement mode."]
 
 
 class TMC_GetStation(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the coordinates of the instrument station
+This function is used to get the co-ordinates of the instrument station."""
 
 
 class TMC_SetStation(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set the coordinates of the instrument station
+This function is used to set the co-ordinates of the instrument station."""
+    defaults = ["0", "0", "0", "0"]
+    helptexts = ["E0[double] - Station easting coordinate",
+               "N0[double] - Station northing coordinate",
+               "H0[double] - Station height coordinate",
+               "Hi[double] - Instrument height"]
 
 
 class TMC_GetHeight(TachyRequest):
     gsi_command = "GET/I/WI88"
+    description = """"Returns the current reflector height
+This function returns the current reflector height."""
+
 
 
 class TMC_SetHeight(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Sets new reflector height
+This function sets a new reflector height."""
+    defaults=["0"]
+    helptexts=["New reflector height"]
 
 
 class TMC_GetAngSwitch(TachyRequest):
@@ -483,9 +526,13 @@ class CSV_GetDeviceConfig(TachyRequest):
 
 
 class MOT_StartController(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Start motor controller
+This command is used to enable remote or user interaction to the motor
+controller."""
+    defaults=[gc.MOT_MODE.MOT_MANUPOS]
+    helptexts=["""Controller mode. If used together with
+MOT_SetVelocity the control mode has
+to be MOT_OCONST"""]
 
 
 class MOT_StopController(TachyRequest):
@@ -549,8 +596,9 @@ class AUT_LockIn(TachyRequest):
 
 
 class AUT_SetATRStatus(TachyRequest):
-    defaults = []
-    helptexts = []
+    description = ""
+    defaults = [gc.ON_OFF_TYPE.ON]
+    helptexts = ['On or off']
 
 
 class AUT_GetATRStatus(TachyRequest):
@@ -584,6 +632,7 @@ class AUT_MakePositioning4(TachyRequest):
 
 
 class AUT_ChangeFace(TachyRequest):
+    description = """"""
     defaults = [gc.AUT_POSMODE.AUT_NORMAL,
                 gc.AUT_ATRMODE.AUT_TARGET,
                 gc.BOOLEAN_TYPE.FALSE]
@@ -609,8 +658,9 @@ class AUT_ChangeFace4(AUT_ChangeFace):
 
 class AUT_Search(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults=["0.1", "0.3"]
+    helptexts=["Horizontal search angle in rad.",
+               "Vertical search angle in rad."]
 
 
 class AUT_Search2(TachyRequest):
@@ -680,9 +730,14 @@ class AUT_PS_EnableRange(TachyRequest):
 
 
 class AUT_PS_SearchNext(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Searching for the next target
+This command executes the 360º default PowerSearch and searches for the next target. A previously defined
+PowerSearch window (AUT_SetSearchArea) is not taken into account. Use AUT_PS_SearchWindow to do so.
+TPS1200+"""
+    defaults=[gc.AUT_DIRECTION.AUT_ANTICLOCKWISE, gc.BOOLEAN_TYPE.TRUE]
+    helptexts=["Defines the searching direction (CLKW=1 or ACLKW=-1)", """TRUE: Searching starts -10 gon to the given direction
+lDirection. This setting finds targets left of the telescope
+direction faster"""]
 
 
 class AUT_PS_SearchWindow(TachyRequest):
