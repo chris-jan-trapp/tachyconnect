@@ -49,12 +49,18 @@ class CommandChain:
     def run_chain(self, *results):
         command = self.commands[self.index]
         if results:
-            self.reply_handler.unregister_command()
+            self.reply_handler.unregister_command(self.commands.command)
             self.index += 1
         if self.index < len(self.commands):
             command = self.commands[self.index]
-            self.reply_handler.register_command(command, self.run_chain)
-            self.dispatcher.send(command[0](timeout=command[1], args=command[3]).get_geocom_command())
+            self.reply_handler.register_command(command.command, self.run_chain)
+            self.dispatcher.send(command.command(timeout=command.timeout, args=command.args).get_geocom_command())
             
     def reset(self):
         self.index = 0
+
+class ChainableCommand:
+    def __init__(self, command, timeout=2, *args):
+        self.command = command
+        self.timeout = timeout
+        self.args = args

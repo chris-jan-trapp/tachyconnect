@@ -200,9 +200,9 @@ class Window(QMainWindow, Ui_MainWindow):
         print("Args: ", ";".join(args))
         # if self.dialect_selector.currentText() == CommunicationConstants.GSI:
         #     self.dispatcher.send(command(args = args).get_gsi_command())
-        # if self.dialect_selector.currentText() == CommunicationConstants.GEOCOM:
-        #     self.dispatcher.send(command(args = args).get_geocom_command())
-        #     print("Sent ascii: " + str(command(args = args).get_geocom_command()))
+        if self.dialect_selector.currentText() == CommunicationConstants.GEOCOM:
+            self.dispatcher.send(command(args = args).get_geocom_command())
+            print("Sent ascii: " + str(command(args = args).get_geocom_command()))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

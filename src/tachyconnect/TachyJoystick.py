@@ -13,7 +13,9 @@ from tachyconnect.TachyRequest import (MOT_StartController,
                                        AUS_SetUserAtrState,
                                        EDM_SetEglIntensity
 )
-from tachyconnect.ReplyHandler import CommandChain
+from tachyconnect.ReplyHandler import CommandChain, ChainableCommand
+
+import tachyconnect.gc_constants as gc
 
 class TachyJoystick(QDialog, Ui_TachyJoystick):
     MAX_SPEED = 0.42
@@ -39,11 +41,11 @@ class TachyJoystick(QDialog, Ui_TachyJoystick):
         print(args)
         if args[0] == '0':
             chain = CommandChain(self.dispatcher)
-            chain.set_commands([AUS_SetUserAtrState, 1 , ['1']],
-                               [AUS_SetUserLockState, 1, ['1']],
-                               [AUT_LockIn, 2, []]
+            chain.set_commands(ChainableCommand(AUS_SetUserAtrState, 1 , gc.ON_OFF_TYPE.ON),
+                               ChainableCommand(AUS_SetUserLockState, 1, gc.ON_OFF_TYPE.ON),
+                               ChainableCommand(AUT_LockIn)
                                )
-            chain.run_chain
+            chain.run_chain()
             # self.dispatcher.send(AUS_SetUserAtrState(args=['1']).get_geocom_command())
             # self.dispatcher.send(AUS_SetUserLockState(args=['1']).get_geocom_command())
             # self.dispatcher.send(AUT_LockIn().get_geocom_command())
