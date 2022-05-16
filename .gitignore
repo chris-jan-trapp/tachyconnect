@@ -5,4 +5,4 @@ build
 /src/tachyconnect_pkg_gbv.egg-info
 .vscode/
 *.json
-src/*.egg-info
+**.egg-info

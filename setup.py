@@ -21,8 +21,11 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Development Status :: 4 - Beta"
     ],
-    package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
+    package_dir={
+        "tc": "src",
+        "tachyconnect": "src/tachyconnect"
+    },
+    package_data={'tachyconnect': ['ui/*.py']},
     python_requires=">=3.8",
     install_requires=["pyqt5"]
 )
