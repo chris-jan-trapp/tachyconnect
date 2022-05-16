@@ -244,11 +244,11 @@ class Dispatcher(QThread):
 
     def start(self):
         self.pollingTimer.start(self.pollingInterval)
-        loop = QEventLoop()
-        loop.exec_()
         self.serial_connected.emit()
         self.log.emit("Started listening.")
-
+        loop = QEventLoop()
+        loop.exec_()
+        
     def stop(self):
         self.pollingTimer.stop()
 
