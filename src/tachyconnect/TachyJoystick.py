@@ -1,6 +1,5 @@
-from ast import arg
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from .ui.tachy_joystick import Ui_Dialog as Ui_TachyJoystick
 from tachyconnect.ts_control import Dispatcher
 from tachyconnect.TachyRequest import (MOT_StartController,
@@ -11,7 +10,6 @@ from tachyconnect.TachyRequest import (MOT_StartController,
                                        AUT_PS_SearchNext,
                                        AUS_SetUserLockState,
                                        AUS_GetUserLockState,
-                                       AUS_SetUserAtrState,
                                        EDM_SetEglIntensity,
                                        AUT_SetATRStatus,
                                        TMC_GetHeight
@@ -28,6 +26,7 @@ class TachyJoystick(QDialog, Ui_TachyJoystick):
     UNLOCKED = " "
     LOCK_STATES = {'0': UNLOCKED,
                    '1': LOCKED}
+    ref_z_received = pyqtSignal(str)
 
     def __init__(self, dispatcher, parent=None, flags=Qt.Dialog | Qt.Tool):
         super().__init__(parent = parent, flags = flags)
@@ -66,7 +65,9 @@ class TachyJoystick(QDialog, Ui_TachyJoystick):
         self.dispatcher.send(TMC_GetHeight(time_out=10).get_geocom_command())
 
     def show_ref_height(self, *args):
-        self.refHeight.setText(f"{float(args[-1]):.3f}")
+        z_text = f"{float(args[-1]):.3f}"
+        self.refHeight.setText(z_text)
+        self.ref_z_received.emit(z_text)
 
     def get_lock_state(self):
         self.dispatcher.send(AUS_GetUserLockState().get_geocom_command())
