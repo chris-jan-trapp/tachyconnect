@@ -203,6 +203,7 @@ class MessageQueue(QObject):
 class Dispatcher(QThread):
     pollingInterval = 1000
     serial_disconnected = pyqtSignal(str)
+    serial_connected = pyqtSignal()
     timed_out = pyqtSignal(str)
     log = pyqtSignal(str)
     non_requested_data = pyqtSignal(str)
@@ -233,7 +234,6 @@ class Dispatcher(QThread):
             return
         port_names = [port.portName() for port in QSerialPortInfo.availablePorts()]
         port_names.reverse()
-        print(port_names)
         def moin():
             if port_names:
                 ping = Ping(port_names.pop(), 500)
@@ -241,12 +241,12 @@ class Dispatcher(QThread):
                 ping.found_tachy.connect(self.set_serial_port)
                 ping.fire()
         moin()
-        print(port_names)
 
     def start(self):
         self.pollingTimer.start(self.pollingInterval)
         loop = QEventLoop()
         loop.exec_()
+        self.serial_connected.emit()
         self.log.emit("Started listening.")
 
     def stop(self):
