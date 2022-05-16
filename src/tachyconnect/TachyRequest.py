@@ -154,8 +154,8 @@ class EDM_Laserpointer(TachyRequest):
     description = """Switch on/off laserpointer
 Laserpointer is only available in theodolites which supports distance
 measurement without reflector."""
-    defaults=[gc.ON_OFF_TYPE.ON]
-    helptexts=["""
+    defaults = [gc.ON_OFF_TYPE.ON]
+    helptexts = ["""
 ON - switch Laserpointer on
 OFF - switch Laserpointer off"""]
 
@@ -179,8 +179,8 @@ mode is set. These functions overlie the functionality of EDM_On and EDM
 cannot be switched off before the Tracklight or the diode laser stops
 working. However, after 10 min the EDM will be switched off.
 Deleted in TPS1100"""
-    defaults=[gc.ON_OFF_TYPE.ON]
-    helptexts=["""ON - switch EDM on
+    defaults = [gc.ON_OFF_TYPE.ON]
+    helptexts = ["""ON - switch EDM on
 OFF - switch EDM off"""]
 
 
@@ -188,8 +188,8 @@ class EDM_SetTrkLightSwitch(TachyRequest):
     description = """Switch on/off tracklight
 The Tracklight must be available for EDM.
 Replaced by: EDM_SetEGLIntensity in TPS1100"""
-    defaults=[gc.ON_OFF_TYPE.ON]
-    helptexts=["""ON - switch on Tracklight
+    defaults = [gc.ON_OFF_TYPE.ON]
+    helptexts = ["""ON - switch on Tracklight
 OFF - switch off Tracklight"""]
 
 
@@ -197,8 +197,8 @@ class EDM_SetTrkLightBrightness(TachyRequest):
     description = """Change intensity of tracklight
 The Tracklight must be available for EDM.
 Replaced by: EDM_SetEGLIntensity in TPS1100"""
-    defaults=[gc.EDM_TRKLIGHT_BRIGHTNESS.EDM_HIGH_BRIGHTNESS]
-    helptexts=[""""""]
+    defaults = [gc.EDM_TRKLIGHT_BRIGHTNESS.EDM_HIGH_BRIGHTNESS]
+    helptexts = [""""""]
 
 
 class EDM_GetTrkLightSwitch(TachyRequest):
@@ -243,15 +243,15 @@ This function carries out an angle measurement and, in dependence of
 configuration, inclination measurement and returns the results. As shown
 the result is very comprehensive. For simple angle measurements use
 TMC_GetAngle5 or TMC_GetSimpleMea instead."""
-    defaults=[gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
-    helptexts=["Inclination sensor measurement mode."]
+    defaults = [gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
+    helptexts = ["Inclination sensor measurement mode."]
 
 
 class TMC_SetInclineSwitch(TachyRequest):
     description = """Switch dual axis compensator on or off
 This function switches the dual axis compensator on or off."""
-    defaults=[gc.ON_OFF_TYPE.ON]
-    helptexts=["Dual axis compensator's state."]
+    defaults = [gc.ON_OFF_TYPE.ON]
+    helptexts = ["Dual axis compensator's state."]
 
 
 class TMC_GetInclineSwitch(TachyRequest):
@@ -301,126 +301,191 @@ This function returns the current reflector height."""
 class TMC_SetHeight(TachyRequest):
     description = """Sets new reflector height
 This function sets a new reflector height."""
-    defaults=["0"]
-    helptexts=["New reflector height"]
+    defaults = ["0"]
+    helptexts = ["New reflector height"]
 
 
 class TMC_GetAngSwitch(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get angular correction's states
+This function returns the angular correction's state."""
 
 
+# ASCII Request takes no parameters
 class TMC_SetAngSwitch(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Enable/disable angle corrections
+With this function you can enable/disable follow angle measurement correction.
+incline: The incline will be considered in the angle
+measurement if enabled.
+stand axis: The stand axis will be considered in the angle
+measurement if enabled.
+collimation: The collimation will be considered in the angle
+measurement if enabled
+tilt axis: The tilt axis will be considered in the angle
+measurement if enabled.
+Note: You can set the various corrections only, if no distance is existing! (Use the
+function TMC_DoMeasure(TMC_CLEAR,..) in order to clear the distance)"""
 
 
 class TMC_SetHandDist(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Input slope distance and height offset
+This function is used to input manually measured slope distance and height
+offset for a following measurement. Additionally an inclination
+measurement and an angle measurement are carried out to determine the
+co-ordinates of target. The V-angle is corrected to π/2 or 3⋅π/2 in
+dependence of the instrument’s face because of the manual input.
+After the function call the previous measured distance is cleared."""
+    defaults = ["10", "1", gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
+    helptexts = ["Slope distance", "Height offset" , "Inclination sensor measurement mode."]
 
 
 class TMC_SetEdmMode(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set EDM measurement modes
+This function set the current measurement modes new. The measure
+function TMC_DoMeasure(TMC_DEF_DIST) will work with this
+configuration."""
+    defaults = [gc.EDM_MODE.EDM_SINGLE_STANDARD]
+    helptexts = ["EDM measurement mode."]
 
 
 class TMC_GetEdmMode(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the EDM measurement mode
+This function returns the EDM measurement mode."""
 
 
 class TMC_GetSignal(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get information about EDM’s signal amplitude
+This function returns information about the amplitude of the EDM signal.
+The function only can perform measuring if the signal measurement
+program is activated. Start the signal measurement program with
+TMC_DoMeasure where Command = TMC_SIGNAL. After the
+measurement the EDM must be switch off (use TMC_DoMeasure where
+Command = TMC_CLEAR"""
 
 
 class TMC_GetPrismCorr(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the prism constant
+This function is used to get the prism constant."""
 
 
 class TMC_SetPrismCorr(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set the prism constant
+This function is used to set the prism constant.
+The high-level function BAP_SetPrismType overwrites this setting."""
+    defaults = ["0.1"]
+    helptexts = ["Prism constant [mm]"]
 
 
 class TMC_GetFace(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get face information of current telescope position
+This function returns the face information of the current telescope position.
+The face information is only valid, if the instrument is in an active
+measurement state (that means a measurement function was called before
+the TMC_GetFace call, see example). Note that the instrument
+automatically turns into an inactive measurement state after a predefined
+timeout."""
 
-
+# todo: Try GetAtmCorr for default values
 class TMC_SetAtmCorr(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set atmospheric correction parameters
+This function is used to set the parameters for the atmospheric correction."""
+    defaults = ["", "", "", ""]
+    helptexts = ["Wave length of the EDM transmitter",
+                "Atmospheric pressure",
+                "Dry temperature",
+                "Wet temperature"]
 
 
 class TMC_GetAtmCorr(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get atmospheric correction parameters
+This function is used to get the parameters for the atmospheric correction."""
 
 
+# todo: Try GetRefractiveCorr for default values
 class TMC_SetRefractiveCorr(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set the refraction factor
+This function is used to set the refraction distortion factor for correction of
+measured height difference."""
+    defaults = [gc.ON_OFF_TYPE.ON, "", ""]
+    helptexts = ["Refraction correction On/Off", "Radius of the earth", "Refractive coefficient"]
 
 
 class TMC_GetRefractiveCorr(TachyRequest):
     gsi_command = "GET/I/WI538"
+    description = """Get the refraction factor
+This function is used to get the refraction distortion factor for correction of
+measured height difference."""
 
 
 class TMC_GetCoordinate(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Gets the coordinates of a measured point
+This function issues an angle measurement and, in dependence of the
+selected Mode, an inclination measurement and calculates the co-ordinates
+of the measured point with an already measured distance. The WaitTime is
+a delay to wait for the distance measurement to finish. Single and tracking
+measurements are supported. Information about a missing distance
+measurement and other information about the quality of the result is
+returned in the return-code."""
+    defaults=["1000", gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
+    helptexts=["""The delay to wait for the distance
+measurement to finish [ms].""",
+"Inclination sensor measurement mode"]
 
 
-class TMC_GetCoordinate1(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+class TMC_GetCoordinate1(TMC_GetCoordinate):
+    pass
 
 
 class TMC_SetRefractiveMethod(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set the refraction model
+This function is used to set the refraction model."""
+    defaults=["2"]
+    helptexts=["""Refraction data:
+Method = 1 means method 1 (for
+Australia)
+Method = 2 means method 2 (for the rest
+of the world)"""]
 
 
 class TMC_GetRefractiveMethod(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the refraction model
+This function is used to get the current refraction model."""
 
 
 class TMC_GetAngle5(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Returns simple angle measurement
+This function carries out an angle measurement and returns the results. In
+contrast to the function TMC_GetAngle1 this function returns only the
+values of the angle. For simple angle measurements use or
+TMC_GetSimpleMea instead.
+Information about measurement is returned in the return code."""
 
 
 class TMC_GetSimpleMea(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Returns angle and distance measurement
+This function returns the angles and distance measurement data. The
+distance measurement will be set invalid afterwards. It is important to note
+that this command does not issue a new distance measurement.
+If a distance measurement is valid the function ignores WaitTime and
+returns the results.
+If no valid distance measurement is available and the distance measurement
+unit is not activated (by TMC_DoMeasure before the TMC_GetSimpleMea
+call) the WaitTime is also ignored and the angle measurement result is
+returned. So this function can be used instead of TMC_GetAngle5.
+Information about distance measurement is returned in the return- code."""
+    defaults=["3000", gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
+    helptexts=["""The delay to wait for the distance
+measurement to finish [ms].""", """Inclination sensor measurement mode."""]
 
 
 class TMC_SetOrientation(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Orients the theodolite in Hz direction
+This function is used to orientates the instrument in Hz direction. It is a
+combination of an angle measurement to get the Hz offset and afterwards
+setting the angle Hz offset in order to orientates onto a target. Before the
+new orientation can be set an existing distance must be cleared (use
+TMC_DoMeasure with the command = TMC_CLEAR)."""
+    defaults=["0.0"]
+    helptexts=["Hz Orientation [rad]"]
 
 
 class TMC_IfDataAzeCorrError(TachyRequest):
@@ -477,7 +542,6 @@ class CSV_GetUserInstrumentName(TachyRequest):
 
 class CSV_SetDateTime(TachyRequest):
     helptexts = ["Year", "Month", "Day", "Hour", "Minute", "Second"]
-    #args_widget = "QLineEdit"
 
     @classmethod
     def get_defaults(cls):
@@ -529,8 +593,8 @@ class MOT_StartController(TachyRequest):
     description = """Start motor controller
 This command is used to enable remote or user interaction to the motor
 controller."""
-    defaults=[gc.MOT_MODE.MOT_MANUPOS]
-    helptexts=["""Controller mode. If used together with
+    defaults = [gc.MOT_MODE.MOT_MANUPOS]
+    helptexts = ["""Controller mode. If used together with
 MOT_SetVelocity the control mode has
 to be MOT_OCONST"""]
 
@@ -652,27 +716,27 @@ This set is only possible if ATR exists and is activated.""",
 
 class AUT_ChangeFace4(AUT_ChangeFace):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class AUT_Search(TachyRequest):
     description = """"""
-    defaults=["0.1", "0.3"]
-    helptexts=["Horizontal search angle in rad.",
-               "Vertical search angle in rad."]
+    defaults = ["0.1", "0.3"]
+    helptexts = ["Horizontal search angle in rad.",
+                "Vertical search angle in rad."]
 
 
 class AUT_Search2(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class AUT_GetFineAdjustMode(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class AUT_SetFineAdjustMode(TachyRequest):
@@ -734,64 +798,64 @@ class AUT_PS_SearchNext(TachyRequest):
 This command executes the 360º default PowerSearch and searches for the next target. A previously defined
 PowerSearch window (AUT_SetSearchArea) is not taken into account. Use AUT_PS_SearchWindow to do so.
 TPS1200+"""
-    defaults=[gc.AUT_DIRECTION.AUT_ANTICLOCKWISE, gc.BOOLEAN_TYPE.TRUE]
-    helptexts=["Defines the searching direction (CLKW=1 or ACLKW=-1)", """TRUE: Searching starts -10 gon to the given direction
+    defaults = [gc.AUT_DIRECTION.AUT_ANTICLOCKWISE, gc.BOOLEAN_TYPE.TRUE]
+    helptexts = ["Defines the searching direction (CLKW=1 or ACLKW=-1)", """TRUE: Searching starts -10 gon to the given direction
 lDirection. This setting finds targets left of the telescope
 direction faster"""]
 
 
 class AUT_PS_SearchWindow(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class BMM_BeepOn(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class BMM_BeepOff(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class BMM_BeepNormal(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class BMM_BeepAlarm(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class CTL_GetUpCounter(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class SUP_GetConfig(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class SUP_SetConfig(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class SUP_SwitchLowTempControl(TachyRequest):
     description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    defaults = [""""""]
+    helptexts = [""""""]
 
 
 class BAP_GetLastDisplayedError(TachyRequest):
