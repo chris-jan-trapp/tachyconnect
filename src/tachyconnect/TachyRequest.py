@@ -272,7 +272,7 @@ distance is clear by the measurement program TMC_CLEAR.
 Note: If you perform a distance measurement with the measure program
 TMC_DEF_DIST, the distance sensor will be work with the set EDM
 mode, see TMC_SetEdmMode."""
-    defaults = [gc.TMC_MEASURE_PRG.TMC_DO_MEASURE, gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
+    defaults = [gc.TMC_MEASURE_PRG.TMC_DEF_DIST, gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
     helptexts = ["TMC measurement mode.", "Inclination sensor measurement mode."]
 
 
@@ -293,7 +293,7 @@ This function is used to set the co-ordinates of the instrument station."""
 
 class TMC_GetHeight(TachyRequest):
     gsi_command = "GET/I/WI88"
-    description = """"Returns the current reflector height
+    description = """Returns the current reflector height
 This function returns the current reflector height."""
 
 
@@ -489,58 +489,106 @@ TMC_DoMeasure with the command = TMC_CLEAR)."""
 
 
 class TMC_IfDataAzeCorrError(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """If ATR error occur
+If you get back the return code
+TMC_ANGLE_NO_FULL_CORRECTION or TMC_
+NO_FULL_CORRECTION from a measurement function, so you can find
+out with this function, whether the returned data record from the
+measurement function a missing deviation correction of the ATR included
+or not."""
 
 
 class TMC_IfDataIncCorrError(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """If incline error occur
+If you get back the return code
+TMC_ANGLE_NO_FULL_CORRECTION or TMC_
+NO_FULL_CORRECTION from a measurement function, so you can find
+out with this function, whether the returned data record from the
+measurement function a missing inclination correction of the incline sensor
+included or not. A error information can only occur if the incline sensor is
+active."""
 
 
 class TMC_GetSimpleCoord(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get cartesian coordinates
+This function get the cartesian co-ordinates if a valid distance existing. The
+parameter WaitTime defined the max wait time in order to get a valid
+distance. If after the wait time not a valid distance existing, the function
+initialise the parameter for the co-ordinates (E,N,H) with 0 and returns a
+error. For the co-ordinate calculate will require incline results. With the
+parameter eProg you have the possibility the incline results either to
+calculate or to measure it anew explicitly. We recommend to use the third
+variant, let the system determined (see parameters)."""
+    defaults=["1000", gc.TMC_INCLINE_PRG.TMC_AUTO_INC]
+    helptexts=["Max. wait time to get a valid distance [ms]", """Incline measuring program
+Note: The best performance regarding measure
+rate and accuracy you get with the automatically
+program, the instrument checks the conditions
+around the station. We recommend to take this
+mode any time."""]
 
 
 class TMC_QuickDist(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Returns slope-distance and hz-,v-angle
+The function waits until a new distance is measured and then it returns the angle
+and the slope-distance, but no co-ordinates. Is no distance available, then it returns
+the angle values (hz, v) and the corresponding return-code.
+At the call of this function, a distance measurement will be started with the rapid-
+tracking measuring program. If the EDM is already active with the standard
+tracking measuring program, the measuring program will not changed to rapid
+tracking. Generally if the EDM is not active, then the rapid tracking measuring
+program will be started, otherwise the used measuring program will not be
+changed.
+In order to abort the current measuring program use the function
+TMC_DoMeasure.
+This function is very good suitable for target tracking, where high data transfers
+are required.
+Note: Due to performance reasons the used inclination will be calculated (only if
+incline is activated), so the basic data for the incline calculation is exact, at
+least two forced incline measurements should be performed in between.
+The forced incline measurement is only necessary if the incline of the
+instrument because of measuring assembly has been changed.
+Use the function TMC_GetAngle(TMC_MEA_INC, Angle) for the forced
+incline measurement. (For the forced incline measurement, the instrument
+must be in stable state for more than 3sec.)."""
 
 
 class TMC_GetSlopeDistCorr(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get slope distance correction factors
+This function retrieves the correction factors that are used for slope
+distance measurement corrections."""
 
 
 class CSV_GetInstrumentNo(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get factory defined instrument number
+Returns the serial number."""
 
 
 class CSV_GetInstrumentName(TachyRequest):
     gsi_command = "GET/I/WI13"
+    description = """Get Leica specific instrument name
+Returns the instrument name"""
 
 
 class CSV_SetUserInstrumentName(TachyRequest):
-    description = """"""
+    description = """Set user defined instrument name
+Deleted in TPS1100+"""
     defaults=[""""""]
-    helptexts=[""""""]
+    helptexts=["""The user defined instrument name."""]
 
 
 class CSV_GetUserInstrumentName(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get user defined instrument name
+This name can be set by the user (see CSV_SetUserInstrumentName) If
+no user instrument name is set the return code is RC_UNDEFINED and the
+Leica specific instrument name is returned.
+Deleted in TPS1100+"""
 
 
 class CSV_SetDateTime(TachyRequest):
+    description = """Set date and time
+It is not possible to set invalid date or time. See data type description of
+DATIME for valid date and time."""
     helptexts = ["Year", "Month", "Day", "Hour", "Minute", "Second"]
 
     @classmethod
@@ -548,45 +596,46 @@ class CSV_SetDateTime(TachyRequest):
         return dt.now().strftime("%Y,%m,%d,%H,%M,%S").split(",")
 
 class CSV_GetDateTime(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get date and time.
+The ASCII response is formatted corresponding to the data type DATIME.
+A possible response can look like this: %R1P,0,0:0,1996,'07',
+'19','10','13','2f' (see chapter ASCII data type declaration for
+further information)"""
 
 
 class CSV_GetVBat(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the value of the voltage supply
+The value of Vbat gives information about the state of charge of the battery.
+New function TPS1100+: CSV_CheckPower"""
 
 
 class CSV_GetVMem(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get value of the memory backup voltage supply
+This routine returns the capacity of the current power source and its source
+(internal or external)."""
 
 
 class CSV_GetIntTemp(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the temperature
+Get the internal temperature of the instrument, measured on the Mainboard
+side. Values are reported in degrees Celsius."""
 
 
 class CSV_GetSWVersion(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Retrieve Server Release Information
+This function retrieves the current GeoCOM release (release, version and
+subversion) of the server."""
 
 
 class CSV_GetSWVersion2(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get Software Version
+Returns the system software version."""
 
 
 class CSV_GetDeviceConfig(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get instrument configuration
+This function returns information about the class and the configuration type
+of the instrument."""
 
 
 class MOT_StartController(TachyRequest):
@@ -600,63 +649,99 @@ to be MOT_OCONST"""]
 
 
 class MOT_StopController(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Stop motor controller
+This command is used to stop movement and to stop the motor controller
+operation."""
+    defaults=[gc.MOT_STOPMODE.MOT_NORMAL]
+    helptexts=["Stop mode"]
 
 
 class MOT_SetVelocity(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Drive Instrument with visual control
+This command is used to set up the velocity of motorization. This function
+is valid only if MOT_StartController(MOT_OCONST) has been called
+previously. RefOmega[0] denotes the horizontal and RefOmega[1]
+denotes the vertical velocity setting.
+
+RefOmega in
+The speed in horizontal and vertical
+direction in rad/s. The maximum speed
+is +/- 0.79 rad/s each."""
+    defaults = ["0.0", "0.0"]
+    helptexts = ["Horizontal Speed", "Vertical Speed"]
 
 
 class MOT_ReadLockStatus(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Return condition of LockIn control
+This function returns the current condition of the LockIn control (see
+subsystem AUT for further information). This command is valid for TCA
+instruments only."""
 
 
 class WIR_GetRecFormat(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get Record Format
+This function retrieves which recording format is in use.
+0 defines recording format is GSI (standard)
+1 defines recording format is the new GSI-16"""
 
 
 class WIR_SetRecFormat(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set Record Format
+This function sets which recording format should be used."""
+    defaults=[gc.WIR_RECFORMAT.WIR_RECFORMAT_GSI16]
+    helptexts=["GSI or GSI16"]
 
 
 class AUT_SetTol(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set the positioning tolerances
+This command stops every movement and sets new values for the
+positioning tolerances of the Hz- and V- instrument axes. This command is
+valid for TCM and TCA instruments only.
+The tolerances must be in the range of 1[cc] ( =1.57079 E-06[rad] ) to
+100[cc] ( =1.57079 E-04[rad] ).
+Note: The max. Resolution of the angle measurement system depends on the
+instrument accuracy class. If smaller positioning tolerances are required,
+the positioning time can increase drastically."""
+    defaults=["0.000028274333882", "0.000028274333882"] # default after ReadTol
+    helptexts=["""The values for the positioning tolerances
+in Hz and V direction [rad].""", """The values for the positioning tolerances
+in Hz and V direction [rad]."""]
 
 
 class AUT_ReadTol(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Read current setting for the positioning tolerances
+This command reads the current setting for the positioning tolerances of the
+Hz- and V- instrument axis.
+This command is valid for TCM and TCA instruments only."""
 
 
 class AUT_SetTimeout(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set timeout for positioning
+This command set the positioning timeout (set maximum time to perform a
+positioning). The timeout is reset on 10[sec] after each power on"""
+    defaults=["10", "10"]
+    helptexts=["""The values for the positioning timeout in
+Hz and V direction [s]. Valid values are
+between 1 [sec] and 60 [sec].""",
+"""The values for the positioning timeout in
+Hz and V direction [s]. Valid values are
+between 1 [sec] and 60 [sec]."""]
 
 
 class AUT_ReadTimeout(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Read current timeout setting for positioning
+This command reads the current setting for the positioning time out
+(maximum time to perform positioning)."""
 
 
 class AUT_LockIn(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Starts the target tracking
+Function starts the target tracking. Is at this time another ATR-
+configuration active, this configuration will be aborted before. The function
+can be called several times. If the target is already locked, the command
+will be ignored. The LOCK mode must be enabled for this functionality,
+see AUS_SetUserLockState and AUS_GetUserLockState. The ATR
+can only lock the target, if it is in the field of view (FoV)."""
 
 
 class AUT_SetATRStatus(TachyRequest):
