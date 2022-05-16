@@ -1,7 +1,7 @@
 from ast import arg
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt
-from ui.tachy_joystick import Ui_Dialog as Ui_TachyJoystick
+from .ui.tachy_joystick import Ui_Dialog as Ui_TachyJoystick
 from tachyconnect.ts_control import Dispatcher
 from tachyconnect.TachyRequest import (MOT_StartController,
                                        MOT_StopController,
