@@ -1171,5 +1171,5 @@ class EDM_EGLINTENSITY_TYPE(Enum):
     EDM_EGLINTEN_HIGH = 3
 
 class WIR_RECFORMAT(Enum):
-     WIR_RECFORMAT_GSI = 0 # defines recording format is GSI (standard)
-     WIR_RECFORMAT_GSI16 = 1 # defines recording format is the new GSI-16
+    WIR_RECFORMAT_GSI = 0 # defines recording format is GSI (standard)
+    WIR_RECFORMAT_GSI16 = 1 # defines recording format is the new GSI-16

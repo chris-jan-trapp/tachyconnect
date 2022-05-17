@@ -745,47 +745,116 @@ can only lock the target, if it is in the field of view (FoV)."""
 
 
 class AUT_SetATRStatus(TachyRequest):
-    description = ""
+    description = """Set the status of the ATR mode
+Activate respectively deactivate the ATR mode.
+Activate ATR mode:
+The ATR mode is activated and the LOCK mode keep unchanged.
+Deactivate ATR mode:
+The ATR mode is deactivated and the LOCK mode (if sets) will be reset
+automatically also.
+This command is valid for TCA instruments only.
+New function TPS1100+: AUS_SetUserAtrState"""
     defaults = [gc.ON_OFF_TYPE.ON]
-    helptexts = ['On or off']
+    helptexts = ['Status of the ATR mode']
 
 
 class AUT_GetATRStatus(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the status of the ATR mode
+Get the current status of the ATR mode on TCA instruments. This
+command does not indicate whether the ATR has currently acquired a
+prism.
+New function TPS1100+: AUS_GetUserAtrState"""
 
 
 class AUT_SetLockStatus(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set of the ATR lock switch
+Set the lock status.
+Status ON:
+The target tracking functionality is available but not activated. In order to
+activate target tracking, see the function AUT_LockIn. The ATR mode will
+be set automatically.
+Status OFF:
+A running target tracking will be aborted and the manual driving wheel is
+activated. The ATR mode will be not reset automatically respectively keep
+unchanged.
+This command is valid for TCA instruments only.
+New Function TPS1100+: AUT_SetUserLockState"""
+    defaults = [gc.ON_OFF_TYPE.ON]
+    helptexts = ["Status of the ATR lock switch"]
 
 
 class AUT_GetLockStatus(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get the status of the lock switch
+This command gets the current LOCK switch. This command is valid for
+TCA instruments only and does not indicate whether the ATR has a prism
+in lock or not.
+With the function MOT_ReadLockStatus you can find out whether a target
+is locked or not.
+New function TPS1100+: AUS_GetUserLockState"""
 
 
 class AUT_MakePositioning(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Turns telescope to specified position
+This procedure turns the telescope absolute to the in Hz and V specified
+position, taking tolerance settings for positioning (see AUT_POSTOL) into
+account. Any active control function is terminated by this function call.
+If the position mode is set to normal (PosMode = AUT_NORMAL) it is
+assumed that the current value of the compensator measurement is valid.
+Positioning precise (PosMode = AUT_PRECISE) forces a new
+compensator measurement at the specified position and includes this
+information for positioning.
+If ATR is possible and activated and the ATR mode is set to AUT_TARGET,
+the instrument tries to position onto a target in the destination area. In
+addition, the target is locked after positioning if the LockIn status is set. If
+the Lock status not set, the manual driving wheel is activated after the
+positioning."""
+    defaults = ["0.0", "0.0", gc.AUT_POSMODE.AUT_NORMAL, gc.AUT_ATRMODE.AUT_POSITION, gc.BOOLEAN_TYPE.FALSE]
+    helptexts = ["Horizontal (telescope) position [rad].",
+                 "Vertical (instrument) position [rad].",
+                 """Position mode:
+AUT_NORMAL: (default) uses the current
+value of the compensator (no
+compensator measurement while
+positioning). For values >25GON
+positioning might tend to inaccuracy.
+AUT_PRECISE: tries to measure exact
+inclination of target. Tend to longer
+position time (check AUT_TIMEOUT
+and/or COM-time out if necessary).""",
+                 """Mode of ATR:
+AUT_POSITION: (default) conventional
+position using values Hz and V.
+AUT_TARGET: tries to position onto a
+target in the destination area. This mode is
+only possible if ATR exists and is
+activated.""",
+                 """It’s reserved for future use, set bDummy
+always to FALSE"""]
 
 
-class AUT_MakePositioning4(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+class AUT_MakePositioning4(AUT_MakePositioning):
+    pass
 
 
 class AUT_ChangeFace(TachyRequest):
-    description = """"""
+    description = """Turns telescope to other face
+This procedure turns the telescope to the other face.
+Is in the moment of the function calling an other control function active it
+will be terminated before.
+The start angle is automatically measured before the position starts.
+If the position mode is set to normal (PosMode = AUT_NORMAL) it is
+allowed that the current value of the compensator measurement is inexact.
+Positioning precise (PosMode = AUT_PRECISE) forces a new
+compensator measurement. If this measurement is not possible, the position
+does not take place.
+If ATR is possible and activated and the ATR mode is set to
+AUT_TARGET the instrument tries to position onto a target in the destination
+area. In addition, the target is locked after positioning if the LockIn status
+is set."""
     defaults = [gc.AUT_POSMODE.AUT_NORMAL,
                 gc.AUT_ATRMODE.AUT_TARGET,
                 gc.BOOLEAN_TYPE.FALSE]
-    helptexts = ["""\
+    helptexts = ["""
 Position mode:
 AUT_NORMAL: uses the current value of the compensator.
 For values >25GON positioning might tend to inexact.
@@ -800,82 +869,136 @@ This set is only possible if ATR exists and is activated.""",
 
 
 class AUT_ChangeFace4(AUT_ChangeFace):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    pass
 
 
 class AUT_Search(TachyRequest):
-    description = """"""
-    defaults = ["0.1", "0.3"]
-    helptexts = ["Horizontal search angle in rad.",
-                "Vertical search angle in rad."]
+    description = """Performs an automatically target search
+This procedure performs an automatically target search within a given area.
+The search area has an elliptical shape where the input parameters
+determine the axis in horizontal and vertical direction. If the search was
+successful, the telescope will position to the target in a exactness of the
+field of vision (±1.25[GON]), otherwise the instrument turns back to the
+initial start position. With the ESC key a running search process will be
+aborted. The ATR mode must be enabled for this functionality, see
+AUS_SetUserAtrState() and AUS_GetUserAtrState. For a exact
+positioning use fine adjust (see AUT_FineAdjust) afterwards.
+Note: If you expand the search range of the function AUT_FineAdjust, then you
+have a target search and a fine positioning in one function."""
+    defaults = ["0.1", "0.3", gc.BOOLEAN_TYPE.FALSE]
+    helptexts = ["Horizontal search region [rad].",
+                 "Vertical search region [rad].",
+                 "It’s reserved for future use, set bDummy always to FALSE"]
 
 
-class AUT_Search2(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+class AUT_Search2(AUT_Search):
+    pass
 
 
 class AUT_GetFineAdjustMode(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Get fine adjust positioning mode
+This function returns the current activated fine adjust positioning mode.
+This command is valid for all instruments, but has only effects for TCA
+instruments."""
 
 
 class AUT_SetFineAdjustMode(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set the fine adjustment mode
+This function sets the positioning tolerances (default values for both
+modes) relating the angle accuracy or the point accuracy for the fine adjust.
+This command is valid for all instruments, but has only effects for TCA
+instruments. If a target is very near or held by hand, it’s recommended to
+set the adjust-mode to AUT_POINT_MODE."""
+    defaults = [gc.AUT_ADJMODE.AUT_POINT_MODE]
+    helptexts = ["""AUT_NORM_MODE: Fine positioning with
+angle tolerance
+AUT_POINT_MODE: Fine positioning with
+point tolerance"""]
 
 
 class AUT_FineAdjust(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Automatic target positioning
+This procedure performs a positioning of the Theodolite axis onto a
+destination target. If the target is not within the sensor measure region a
+target search will be executed. The target search range is limited by the
+parameter dSrchV in V- direction and by parameter dSrchHz in Hz -
+direction. If no target found the instrument turns back to the initial start
+position. The ATR mode must be enabled for this functionality, see
+AUS_SetUserAtrState and AUS_GetUserAtrState.
+Any actual target lock is terminated by this procedure call. After position,
+the target is not locked again.
+The timeout of this operation is set to 5s, regardless of the general position
+timeout settings. The positioning tolerance is depends on the previously set
+up the fine adjust mode (see AUT_SetFineAdjustMoed and
+AUT_GetFineAdjustMode).
+Tolerance settings (with AUT_SetTol and AUT_ReadTol) have no
+influence to this operation. The tolerance settings as well as the ATR
+measure precision depends on the instrument’s class and the used EDM
+measure mode (The EDM measure modes are handled by the subsystem
+TMC)."""
+    defaults = ["0.1", "0.3", gc.BOOLEAN_TYPE.FALSE]
+    helptexts = ["Search range Hz-axis",
+                 "Search range V-axis",
+                 "It’s reserved for future use, set bDummy always to FALSE"]
 
 
-class AUT_FineAdjust3(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+class AUT_FineAdjust3(AUT_FineAdjust):
+    pass
 
 
 class AUT_GetUserSpiral(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get user searching spiral
+This function returns the current dimension of the searching spiral. This
+command is valid for all instruments, but has only effects for TCA
+instruments."""
 
 
 class AUT_SetUserSpiral(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set user searching spiral
+This function sets the dimension of the searching spiral. This command is
+valid for all instruments, but has only effects for TCA instruments."""
+    defaults = ["0.4", "0.2"]
+    helptexts = ["Width of spiral [rad]", "Maximal height of spiral [rad]"]
 
 
 class AUT_GetSearchArea(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get user searching area
+This function returns the current user searching area. This command is
+valid for all instruments, but has only effects for TCA instruments."""
 
 
 class AUT_SetSearchArea(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set user searching area
+This function defines the user definable searching area. This command is
+valid for all instruments, but has only effects for TCA instruments."""
+    defaults = ["0.5", "1.5708", "0.4", "0.2", gc.BOOLEAN_TYPE.TRUE]
+    helptexts = ["Hz angle of spiral - center",
+                 "V angle of spiral - center",
+                 "Width of spiral [rad]",
+                 "Maximal height of spiral [rad]",
+                 "TRUE: user defined spiral is active"]
 
 
 class AUT_PS_SetRange(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Setting the PowerSearch range
+This command defines the PowerSearch distance range limits.
+These additional limits (additional to the PowerSearch window) will be used once the range checking is enabled
+(AUT_PS_EnableRange).
+TPS1200+"""
+    defaults=["0.1", "0.3"]
+    helptexts=["Minimal distance to prism (≥ 0m)",
+               """Maximal distance to prism, where
+lMaxDist ≤ 400m
+lMaxdist ≥ lMinDist + 10"""]
 
 
 class AUT_PS_EnableRange(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Enabling the PowerSearch window and PowerSearch range
+This command enables / disables the predefined PowerSearch window including the predefined PowerSearch
+range limits, set by AUT_PS_SetRange"""
+    defaults=[gc.BOOLEAN_TYPE.TRUE]
+    helptexts=["""TRUE: Enables the user distance limits for PowerSearch
+FALSE: Default range 0..400m"""]
 
 
 class AUT_PS_SearchNext(TachyRequest):
@@ -890,123 +1013,180 @@ direction faster"""]
 
 
 class AUT_PS_SearchWindow(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Starting PowerSearch
+This command starts PowerSearch inside the given PowerSearch window, defined by AUT_SetSearchArea
+and optional by AUT_PS_SetRange"""
 
 
 class BMM_BeepOn(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Start a beep-signal
+This function switches on the beep-signal with the intensity nIntens and
+the frequency nFreq. If a continuous signal is active, it will be stopped
+first. Turn off the beeping device with BMM_BeepOff.
+TPS1000
+New function TPS1100+: IOS_BeepOn"""
+    defaults = ["100", "3900"]
+    helptexts = ["""Intensity of the beep-signal (volume)
+expressed as a percentage.
+Default value is 100 %""",
+"""Frequency of the beep-signal.
+Default value is 3900 Hz.
+Range: 500 Hz ... 5000 Hz"""]
 
 
 class BMM_BeepOff(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Stop active beep-signal
+TPS1000
+New function TPS1100+: IOS_BeepOff"""
 
 
 class BMM_BeepNormal(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """A single beep-signal
+This function produces a single beep with the configured intensity and
+frequency, which cannot be changed. If a continuous signal is active, it will
+be stopped first."""
 
 
 class BMM_BeepAlarm(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Output of an alarm-signal
+This function produces a triple beep with the configured intensity and
+frequency, which cannot be changed. If there is a continuous signal active,
+it will be stopped before."""
 
 
 class CTL_GetUpCounter(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Get Up Counter
+This function retrieves how often, since the last call of this function, the
+TPS1100 instrument has been switched on and how often it has been
+awakened from sleep mode. Both counters are unique and will be reset to
+Zero once the function has been called."""
 
 
 class SUP_GetConfig(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Get power management configuration status
+The returned settings are power off configuration and timing."""
 
 
 class SUP_SetConfig(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Set power management configuration
+Set the configuration for the low temperature control (ON|OFF), the auto
+power off automatic (AUTO_POWER_DISABLED|..._SLEEP|..._OFF)
+and the corresponding timeout for the auto power off automatic."""
+    defaults = [gc.ON_OFF_TYPE.ON, gc.SUP_AUTO_POWER.AUTO_POWER_SLEEP, "900000"]
+    helptexts = ["""Switch for the low temperature control.
+Per default the device automatically turns
+off when internal temperature fall short of
+-24 °C (LowTempOnOff = On).""",
+"""Defines the behaviour of the power off automatic
+(default: AutoPower = AUTO_POWER_SLEEP).""",
+"""The timeout in ms. After this time the
+device switches in the mode defined by the
+value of AutoPower when no user activity
+(press a key, turn the device or
+communication via GeoCOM) occurs.
+The default value for Timeout is 900000ms = 15 Min."""]
 
 
 class SUP_SwitchLowTempControl(TachyRequest):
-    description = """"""
-    defaults = [""""""]
-    helptexts = [""""""]
+    description = """Set low temperature control
+Activate (ON) respectively deactivate (OFF) the low temperature control."""
+    defaults = [gc.ON_OFF_TYPE.ON]
+    helptexts = ["""Switch for the low temperature control.
+Per defaults the device automatically turns
+off when internal temperature fall short of
+-24 °C."""]
 
 
 class BAP_GetLastDisplayedError(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get last TPS system error number
+This function returns the last displayed error and clears it in the TPS
+system. So a second GetLastDisplayedError call will result in
+RC_IVRESULT."""
 
 
 class BAP_SetPrismType(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Sets the prism type
+Sets the prism type for measurements with a reflector. It overwrites the
+prism constant, set by TMC_SetPrismCorr."""
+    defaults=[gc.BAP_PRISMTYPE.BAP_PRISM_360]
+    helptexts=["Prism type"]
 
 
 class BAP_GetPrismType(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get actual prism type
+Gets the current prism type."""
 
 
 class BAP_MeasDistanceAngle(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Measure distance and angles
+This function measures distances and angles depending on the mode
+DistMode and updates the internal data pool after correct measurements. It
+controls the special beep (sector or lost lock), maintains measurement icons
+and disables the "FNC"-key during tracking."""
+    defaults = [gc.BAP_MEASURE_PRG.BAP_DEF_DIST]
+    helptexts = ["BAP_DEF_DIST, pre-defined using BAP_SetMeasPrg"]
 
 
 class BAP_GetMeasPrg(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get actual distance measurement program"""
 
 
 class BAP_SetMeasPrg(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Set the distance measurement program
+Defines the distance measurement program i.e. for
+BAP_MeasDistanceAngle
+Reflector-free measurement programs are not available on all instrument
+types.
+Changing the measurement programs may change the target type too (with
+reflector / reflector-free)"""
+    defaults = [gc.BAP_USER_MEASPRG.BAP_SINGLE_REF_STANDARD]
+    helptexts = ["Measurement program"]
 
 
 class BAP_SearchTarget(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Search the target
+Function searches a target. The used searching range is dependent of the set
+searching area and whether the additional user area is enabled or not. The
+functionality is only available by ATR instruments."""
+    defaults = [gc.BOOLEAN_TYPE.FALSE]
+    helptexts = ["""It’s reserved for future use, set bDummy
+always to FALSE"""]
 
 
 class BAP_SetTargetType(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Sets the target type
+Defines the target type, with reflector or reflector-free
+If the actual distance measurement not valid for the set target type, then the
+measurement program will be changed to the last used one for this type.
+BAP_SetMeasPrg can also change the target type.
+Reflector-free measurement programs are not available on all instrument
+types."""
+    defaults = [gc.BAP_TARGET_TYPE.BAP_REFL_USE]
+    helptexts = ["""Target type"""]
 
 
 class BAP_GetTargetType(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get actual target type
+Gets the current target type for distance measurements (with reflector or
+without reflector)."""
 
 
 class BAP_GetPrismDef(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Get a prism definition
+Get the definition of a prism."""
+    defaults = [gc.BAP_PRISMTYPE.BAP_PRISM_360]
+    helptexts = ["Actual prism type"]
 
 
 class BAP_SetPrismDef(TachyRequest):
-    description = """"""
-    defaults=[""""""]
-    helptexts=[""""""]
+    description = """Sets a user prism definition
+Defines an user prism."""
+    defaults = [gc.BAP_PRISMTYPE.BAP_PRISM_USER1, "name", "0.0", gc.BAP_REFLTYPE.BAP_REFL_PRISM]
+    helptexts = ["""Prism type. Valid:
+BAP_PRISM_USER1.. BAP_PRISM_USER3""",
+                "Prism name string",
+                "Prism correction",
+                "Reflector type"]
 
 
 class AUS_GetUserAtrState(TachyRequest):
@@ -1087,132 +1267,133 @@ This function switches off the beep-signal."""
 
 
 ALL_COMMANDS = [
-    COM_NullProc,
-    COM_Local,
-    COM_SetDoublePrecision,
-    COM_GetDoublePrecision,
-    COM_SetSendDelay,
-    COM_GetSWVersion,
-    COM_SwitchOnTPS,
-    COM_SwitchOffTPS,
-    COM_GetBinaryAvailable,
-    COM_SetBinaryAvailable,
-    COM_EnableSignOff,
-    EDM_Laserpointer,
-    EDM_SetBumerang,
-    EDM_On,
-    EDM_SetTrkLightSwitch,
-    EDM_SetTrkLightBrightness,
-    EDM_GetTrkLightSwitch,
-    EDM_GetTrkLightBrightness,
-    EDM_GetBumerang,
-    EDM_GetEglIntensity,
-    EDM_SetEglIntensity,
-    TMC_GetAngle1,
-    TMC_SetInclineSwitch,
-    TMC_GetInclineSwitch,
-    TMC_DoMeasure,
-    TMC_GetStation,
-    TMC_SetStation,
-    TMC_GetHeight,
-    TMC_SetHeight,
-    TMC_GetAngSwitch,
-    TMC_SetAngSwitch,
-    TMC_SetHandDist,
-    TMC_SetEdmMode,
-    TMC_GetEdmMode,
-    TMC_GetSignal,
-    TMC_GetPrismCorr,
-    TMC_SetPrismCorr,
-    TMC_GetFace,
-    TMC_SetAtmCorr,
-    TMC_GetAtmCorr,
-    TMC_SetRefractiveCorr,
-    TMC_GetRefractiveCorr,
-    TMC_GetCoordinate,
-    TMC_GetCoordinate1,
-    TMC_SetRefractiveMethod,
-    TMC_GetRefractiveMethod,
-    TMC_GetAngle5,
-    TMC_GetSimpleMea,
-    TMC_SetOrientation,
-    TMC_IfDataAzeCorrError,
-    TMC_IfDataIncCorrError,
-    TMC_GetSimpleCoord,
-    TMC_QuickDist,
-    TMC_GetSlopeDistCorr,
-    CSV_GetInstrumentNo,
-    CSV_GetInstrumentName,
-    CSV_SetUserInstrumentName,
-    CSV_GetUserInstrumentName,
-    CSV_SetDateTime,
-    CSV_GetDateTime,
-    CSV_GetVBat,
-    CSV_GetVMem,
-    CSV_GetIntTemp,
-    CSV_GetSWVersion,
-    CSV_GetSWVersion2,
-    CSV_GetDeviceConfig,
-    MOT_StartController,
-    MOT_StopController,
-    MOT_SetVelocity,
-    MOT_ReadLockStatus,
-    WIR_GetRecFormat,
-    WIR_SetRecFormat,
-    AUT_SetTol,
-    AUT_ReadTol,
-    AUT_SetTimeout,
-    AUT_ReadTimeout,
-    AUT_LockIn,
-    AUT_SetATRStatus,
-    AUT_GetATRStatus,
-    AUT_SetLockStatus,
-    AUT_GetLockStatus,
-    AUT_MakePositioning,
-    AUT_MakePositioning4,
+    AUS_GetRcsSearchSwitch,
+    AUS_GetUserAtrState,
+    AUS_GetUserLockState,
+    AUS_SetUserAtrState,
+    AUS_SetUserLockState,
+    AUS_SwitchRcsSearch,
     AUT_ChangeFace,
     AUT_ChangeFace4,
-    AUT_Search,
-    AUT_Search2,
-    AUT_GetFineAdjustMode,
-    AUT_SetFineAdjustMode,
     AUT_FineAdjust,
     AUT_FineAdjust3,
-    AUT_GetUserSpiral,
-    AUT_SetUserSpiral,
+    AUT_GetATRStatus,
+    AUT_GetFineAdjustMode,
+    AUT_GetLockStatus,
     AUT_GetSearchArea,
-    AUT_SetSearchArea,
-    AUT_PS_SetRange,
+    AUT_GetUserSpiral,
+    AUT_LockIn,
+    AUT_MakePositioning,
+    AUT_MakePositioning4,
     AUT_PS_EnableRange,
     AUT_PS_SearchNext,
     AUT_PS_SearchWindow,
-    BMM_BeepOn,
-    BMM_BeepOff,
-    BMM_BeepNormal,
+    AUT_PS_SetRange,
+    AUT_ReadTimeout,
+    AUT_ReadTol,
+    AUT_Search,
+    AUT_Search2,
+    AUT_SetATRStatus,
+    AUT_SetFineAdjustMode,
+    AUT_SetLockStatus,
+    AUT_SetSearchArea,
+    AUT_SetTimeout,
+    AUT_SetTol,
+    AUT_SetUserSpiral,
+    BAP_GetLastDisplayedError,
+    BAP_GetMeasPrg,
+    BAP_GetPrismDef,
+    BAP_GetPrismType,
+    BAP_GetTargetType,
+    BAP_MeasDistanceAngle,
+    BAP_SearchTarget,
+    BAP_SetMeasPrg,
+    BAP_SetPrismDef,
+    BAP_SetPrismType,
+    BAP_SetTargetType,
     BMM_BeepAlarm,
+    BMM_BeepNormal,
+    BMM_BeepOff,
+    BMM_BeepOn,
+    COM_EnableSignOff,
+    COM_GetBinaryAvailable,
+    COM_GetDoublePrecision,
+    COM_GetSWVersion,
+    COM_Local,
+    COM_NullProc,
+    COM_SetBinaryAvailable,
+    COM_SetDoublePrecision,
+    COM_SetSendDelay,
+    COM_SwitchOffTPS,
+    COM_SwitchOnTPS,
+    CSV_GetDateTime,
+    CSV_GetDeviceConfig,
+    CSV_GetInstrumentName,
+    CSV_GetInstrumentNo,
+    CSV_GetIntTemp,
+    CSV_GetSWVersion,
+    CSV_GetSWVersion2,
+    CSV_GetUserInstrumentName,
+    CSV_GetVBat,
+    CSV_GetVMem,
+    CSV_SetDateTime,
+    CSV_SetUserInstrumentName,
     CTL_GetUpCounter,
+    EDM_GetBumerang,
+    EDM_GetEglIntensity,
+    EDM_GetTrkLightBrightness,
+    EDM_GetTrkLightSwitch,
+    EDM_Laserpointer,
+    EDM_On,
+    EDM_SetBumerang,
+    EDM_SetEglIntensity,
+    EDM_SetTrkLightBrightness,
+    EDM_SetTrkLightSwitch,
+    IOS_BeepOff,
+    IOS_BeepOn,
+    MOT_ReadLockStatus,
+    MOT_SetVelocity,
+    MOT_StartController,
+    MOT_StopController,
     SUP_GetConfig,
     SUP_SetConfig,
     SUP_SwitchLowTempControl,
-    BAP_GetLastDisplayedError,
-    BAP_SetPrismType,
-    BAP_GetPrismType,
-    BAP_MeasDistanceAngle,
-    BAP_GetMeasPrg,
-    BAP_SetMeasPrg,
-    BAP_SearchTarget,
-    BAP_SetTargetType,
-    BAP_GetTargetType,
-    BAP_GetPrismDef,
-    BAP_SetPrismDef,
-    AUS_SetUserAtrState,
-    AUS_GetUserAtrState,
-    AUS_SetUserLockState,
-    AUS_GetUserLockState,
-    AUS_SwitchRcsSearch,
-    AUS_GetRcsSearchSwitch,
-    IOS_BeepOff,
-    IOS_BeepOn]
+    TMC_DoMeasure,
+    TMC_GetAngle1,
+    TMC_GetAngle5,
+    TMC_GetAngSwitch,
+    TMC_GetAtmCorr,
+    TMC_GetCoordinate,
+    TMC_GetCoordinate1,
+    TMC_GetEdmMode,
+    TMC_GetFace,
+    TMC_GetHeight,
+    TMC_GetInclineSwitch,
+    TMC_GetPrismCorr,
+    TMC_GetRefractiveCorr,
+    TMC_GetRefractiveMethod,
+    TMC_GetSignal,
+    TMC_GetSimpleCoord,
+    TMC_GetSimpleMea,
+    TMC_GetSlopeDistCorr,
+    TMC_GetStation,
+    TMC_IfDataAzeCorrError,
+    TMC_IfDataIncCorrError,
+    TMC_QuickDist,
+    TMC_SetAngSwitch,
+    TMC_SetAtmCorr,
+    TMC_SetEdmMode,
+    TMC_SetHandDist,
+    TMC_SetHeight,
+    TMC_SetInclineSwitch,
+    TMC_SetOrientation,
+    TMC_SetPrismCorr,
+    TMC_SetRefractiveCorr,
+    TMC_SetRefractiveMethod,
+    TMC_SetStation,
+    WIR_GetRecFormat,
+    WIR_SetRecFormat
+    ]
 
 if __name__=="__main__":
     set_station = TMC_SetStation()
