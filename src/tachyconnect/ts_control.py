@@ -34,7 +34,7 @@ class TachyCommand(QObject):
     REPLY_PREFIX = ""
     protocol = None
 
-    def __init__(self, command: str, label = None, time_out = 2, args = []) -> None:
+    def __init__(self, command: str, label = None, time_out = 2, args = []):
         super().__init__()
         self.command = command
         self.args = args
@@ -43,10 +43,10 @@ class TachyCommand(QObject):
         self.label = command if label is None else label
 
 
-    def parse_reply(self, reply_bytes: bytes) -> str:
+    def parse_reply(self, reply_bytes: bytes):
         return reply_bytes.decode('ascii')
 
-    def set_transaction_id(self, id: int) -> None:
+    def set_transaction_id(self, id: int):
         self.transaction_id = id
 
     def get_transaction_id(self) -> int:
@@ -63,7 +63,7 @@ class TachyCommand(QObject):
 
 
 class GSICommand(TachyCommand):
-    def __init__(self, command: str, label = None, time_out = 2, args = []) -> None:
+    def __init__(self, command: str, label = None, time_out = 2, args = []):
         super().__init__(command, label, time_out=time_out, args=args)
         self.protocol=CommunicationConstants.GSI
 
@@ -84,7 +84,7 @@ class GSICommand(TachyCommand):
 class GeoCOMCommand(TachyCommand):
     MESSAGE_PREFIX = CommunicationConstants.GEOCOM_MESSAGE_PREFIX
 
-    def __init__(self, command: str, label = None, time_out = 2, *args) -> None:
+    def __init__(self, command: str, label = None, time_out = 2, *args):
         super().__init__(command, label, time_out=time_out, args = args)
         self.protocol=CommunicationConstants.GEOCOM
 
@@ -95,17 +95,17 @@ class GeoCOMCommand(TachyCommand):
 
 
 class TachyReply:
-    def __init__(self, bites: bytes) -> None:
+    def __init__(self, bites: bytes):
         self.bites = bites
         self.ascii = bites.data().decode('ascii')
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.ascii
 
-    def get_transaction_id(self) -> int:
+    def get_transaction_id(self):
         raise ValueError("This base type is not supposed to have an id.")
 
-    def get_protocol(self) -> str:
+    def get_protocol(self):
         if self.ascii[0] in CommunicationConstants.GSI_REPLY_PREFIXES:
             return CommunicationConstants.GSI
         if self.ascii.startswith(CommunicationConstants.GEOCOM_REPLY_PREFIX) or self.ascii[:4] == "@W127":
@@ -124,7 +124,7 @@ class GSIReply(TachyReply):
     def PREFIX(self):
         self.ascii[0]
 
-    def get_transaction_id(self) -> int:
+    def get_transaction_id(self):
         return 1
 
     def success(self):
@@ -137,7 +137,7 @@ class GSIReply(TachyReply):
 class GeoCOMReply(TachyReply):
     PREFIX = CommunicationConstants.GEOCOM_REPLY_PREFIX
 
-    def get_transaction_id(self) -> int:
+    def get_transaction_id(self):
         header = self.ascii.split(':')[0]
         segments = header.split(",")
         return int(segments[2])
@@ -161,8 +161,8 @@ class MessageQueue(QObject):
     def set_serial(self, serial):
         self.serial = serial
 
-    def append(self, msg: TachyCommand) -> int:
-        def first_free_slot() -> int:
+    def append(self, msg: TachyCommand):
+        def first_free_slot():
             for i in self.indices:
                 if i not in self.slots.keys():
                     return i
@@ -184,7 +184,7 @@ class MessageQueue(QObject):
             messages.append((index, self.slots.pop(index)['message']))
         return messages
 
-    def register_reply(self, reply: TachyReply) -> tuple:
+    def register_reply(self, reply: TachyReply):
         message_id = reply.get_transaction_id()
         try:
             request = self.slots.pop(message_id)
@@ -195,24 +195,27 @@ class MessageQueue(QObject):
     def close(self):
         self.serial.close()
 
-    def __str__(self) -> str:
+    def __str__(self):
         n_slots = self.indices[-1]
         return f"Message queue with {n_slots} slot{'s' if n_slots > 1 else ''}"
 
 
 class Dispatcher(QThread):
     pollingInterval = 1000
-    serial_disconnected = pyqtSignal(str)
-    serial_connected = pyqtSignal()
+    serial_disconnected = pyqtSignal(str, str)
+    serial_connected = pyqtSignal(str, str)
     timed_out = pyqtSignal(str)
     log = pyqtSignal(str)
     non_requested_data = pyqtSignal(str)
+    SERIAL_CONNECTED = '🔗'
+    NO_SERIAL_AVAILABLE = '⚠️'
 
-    def __init__(self, gsi_queue: MessageQueue, geocom_queue: MessageQueue, reply_handler, parent = None) -> None:
+    def __init__(self, gsi_queue: MessageQueue, geocom_queue: MessageQueue, reply_handler, parent = None):
         super(self.__class__, self).__init__(parent)
         self.pollingTimer = QTimer(self)
         self.pollingTimer.timeout.connect(self.poll)
         self.serial = QSerialPort()
+        self.loop = QEventLoop()
         self.queues = {CommunicationConstants.GSI: gsi_queue,
                        CommunicationConstants.GEOCOM: geocom_queue}
         self.reply_types = {CommunicationConstants.GSI: GSIReply,
@@ -228,9 +231,10 @@ class Dispatcher(QThread):
         # close port if connection is established
         self.log.emit("Connection attempt")
         if self.serial.isOpen():
-            port_name = self.serial.portName
+            port_name = self.serial.portName()
             self.serial.close()
-            self.serial_disconnected.emit(port_name)
+            self.serial_disconnected.emit(self.NO_SERIAL_AVAILABLE, port_name)
+            self.loop.quit()
             return
         port_names = [port.portName() for port in QSerialPortInfo.availablePorts()]
         port_names.reverse()
@@ -244,11 +248,11 @@ class Dispatcher(QThread):
 
     def start(self):
         self.pollingTimer.start(self.pollingInterval)
-        self.serial_connected.emit()
+        self.serial_connected.emit(self.SERIAL_CONNECTED, self.serial.portName())
         self.log.emit("Started listening.")
-        loop = QEventLoop()
-        loop.exec_()
-        
+        self.loop = QEventLoop()
+        self.loop.exec_()
+
     def stop(self):
         self.pollingTimer.stop()
 
@@ -268,7 +272,7 @@ class Dispatcher(QThread):
     def poll(self):
         if self.serial.error() == QSerialPort.ResourceError:  # device is unexpectedly removed from the system
             self.serial.close()
-            self.serial_disconnected.emit(f"Connection {self.serial.portName} failed")
+            self.serial_disconnected.emit(f"Connection {self.serial.portName} failed", self.serial.portName())
         if self.serial.canReadLine():
             reply = TachyReply(self.serial.readLine())
             self.register_reply(reply)
@@ -313,11 +317,12 @@ class Ping(QThread):
         self.timer = QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.read)
+        self.ping_loop = QEventLoop()
 
     def fire(self):
         self.timer.start(self.timeout)
-        loop = QEventLoop()
-        loop.exec_()
+        self.ping_loop = QEventLoop()
+        self.ping_loop.exec_()
 
     def read(self):
         self.pinging.emit(f"Pinging {self.serial.portName()}")
@@ -332,5 +337,6 @@ class Ping(QThread):
             self.timed_out.emit(f"Ping timed out: {self.serial.portName()}")
 
         self.serial.close()
+        self.ping_loop.quit()
         self.quit()
 
