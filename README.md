@@ -50,6 +50,15 @@ Here you find names for the constants that are used as return codes (`GRC_...`) 
 You also get a set of dicts that map the return codes to their names and a more verbose message.
 For commands you get a dict that maps command names to the numerical codes.
 
+A geoCOM reply consist of two sections: header and a results section, which are separated by a colon.
+The first entry in the results usually is a return code that describes the overall success of the command.
+The header also contains a return code, which describes the success of the transaction.
+Both parts can have seemingly conflicting reply codes at the same time.
+A typical example is the `TMC_GetCoordinate` command that even after being successfully transmitted may inform you that it requires a fresh distance measurement `1285: "Warning: only angle measurement valid"`.
+
+Note that the command and return codes are integers.
+When handling actual replies, they come as strings, so remember to cast them to integers.
+
 
 ### Abstraction
 
@@ -57,7 +66,7 @@ Messages to and from the total station get a technical implementation which is t
 The technical implementation handles the details of constructing the actual byte array that is sent over the serial connection and the extraction of results from the reply.
 This is done for GSI and geoCom and takes place in `ts_control.py`.
 
-The wrapper deals with the *intent* of a command e.g. "Take a measurement" and separates it from the two dialects. 
+The wrapper deals with the *intent* of a command e.g. "Take a measurement" and separates it from the two dialects.
 
 
 #### `TachyRequest.py`
@@ -84,6 +93,7 @@ The dispatcher looks up which dialect implements the functionality and generate 
 The class name is also used as label, which in turn can be used to link commands to slots.
 See the `ReplyHandler` documentation below for more on this.
 Each `TachyRequest` has a gsi command string, a geoCOM command string and also `unpacking_keys`, which are required to access the data in GSI replies.
+***NOTE: It turned out that the command subsets of the two dialects are much less congruent than initially assumed. So far only a hand full of GSI commands are actually implemented.
 In the example above this would be '`instrumentZ`'.
 The constructor takes a timeout in seconds (defaults to 2) and optional parameters, which will be attached to the actual request.
 
@@ -108,3 +118,11 @@ Besides that the following methods are provided:
 ## The Console
 
 The `tachy_console.py` provides you with debugging functionalities and examples for sending and receiving messages.
+![Main window](media/main_window.png)
+
+Use the Tachy menu to connect to your device. The two comboboxes at the left are the dialect selector and the command selector. 
+Once a command is selected additional comboboxes or line edits are shown and populated with default values.
+They also get tool tips.
+Clicking the send button on the right appends the request to the active queue with a default time out of two seconds.
+This works for most commands besides the robotic commands for search, which may take much longer to finish.
+Request, reply and time outs are being displayed in the central multi line text field.
