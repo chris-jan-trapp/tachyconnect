@@ -366,6 +366,12 @@
        <property name="text">
         <string>OK</string>
        </property>
+       <property name="shortcut">
+        <string/>
+       </property>
+       <property name="autoRepeat">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
