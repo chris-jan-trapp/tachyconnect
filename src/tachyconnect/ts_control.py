@@ -311,18 +311,20 @@ class Ping(QThread):
         self.timeout = timeout
         self.serial = QSerialPort()
         self.serial.setPortName(port_name)
-        self.serial.open(QSerialPort.ReadWrite)
+        self.is_open = self.serial.open(QSerialPort.ReadWrite)
+        if not self.is_open:
+            return
         message = f"{GeoCOMCommand.MESSAGE_PREFIX},{str(gc_constants.BMM_BeepAlarm)},1:{gc_constants.CRLF}"
         self.serial.writeData(message.encode('ascii'))
         self.timer = QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.read)
-        self.ping_loop = QEventLoop()
-
+        
     def fire(self):
-        self.timer.start(self.timeout)
-        self.ping_loop = QEventLoop()
-        self.ping_loop.exec_()
+        if self.is_open:
+            self.timer.start(self.timeout)
+            self.ping_loop = QEventLoop()
+            self.ping_loop.exec_()
 
     def read(self):
         self.pinging.emit(f"Pinging {self.serial.portName()}")
