@@ -34,12 +34,11 @@ class TachyCommand(QObject):
     REPLY_PREFIX = ""
     protocol = None
 
-    def __init__(self, command: str, label = None, time_out = 2, args = []):
+    def __init__(self, command: str, label = None, args = []):
         super().__init__()
         self.command = command
         self.args = args
         self.transaction_id = 0
-        self.time_out = time_out
         self.label = command if label is None else label
 
 
@@ -63,8 +62,8 @@ class TachyCommand(QObject):
 
 
 class GSICommand(TachyCommand):
-    def __init__(self, command: str, label = None, time_out = 2, args = []):
-        super().__init__(command, label, time_out=time_out, args=args)
+    def __init__(self, command: str, label = None, args = []):
+        super().__init__(command, label, args=args)
         self.protocol=CommunicationConstants.GSI
 
     def get_transaction_id(self) -> int:
@@ -84,8 +83,8 @@ class GSICommand(TachyCommand):
 class GeoCOMCommand(TachyCommand):
     MESSAGE_PREFIX = CommunicationConstants.GEOCOM_MESSAGE_PREFIX
 
-    def __init__(self, command: str, label = None, time_out = 2, *args):
-        super().__init__(command, label, time_out=time_out, args = args)
+    def __init__(self, command: str, label = None, *args):
+        super().__init__(command, label, args = args)
         self.protocol=CommunicationConstants.GEOCOM
 
     @property
@@ -171,18 +170,10 @@ class MessageQueue(QObject):
             return False
         slot = first_free_slot()
         if slot and self.serial:
-            self.slots[slot] = {"message": msg.label,
-                                "timeout": time() + msg.time_out}
+            self.slots[slot] = {"message": msg.label}
             msg.set_transaction_id(slot)
             self.serial.write(msg.bytes)
         return slot
-
-    def check_timeouts(self):
-        over_ripes = list(filter(lambda i: i[1]['timeout'] < time(), self.slots.items()))
-        messages = []
-        for index, msg in over_ripes:
-            messages.append((index, self.slots.pop(index)['message']))
-        return messages
 
     def register_reply(self, reply: TachyReply):
         message_id = reply.get_transaction_id()
@@ -204,7 +195,6 @@ class Dispatcher(QThread):
     pollingInterval = 1000
     serial_disconnected = pyqtSignal(str, str)
     serial_connected = pyqtSignal(str, str)
-    timed_out = pyqtSignal(str)
     log = pyqtSignal(str)
     non_requested_data = pyqtSignal(str)
     SERIAL_CONNECTED = '🔗'
@@ -273,15 +263,11 @@ class Dispatcher(QThread):
         if self.serial.error() == QSerialPort.ResourceError:  # device is unexpectedly removed from the system
             self.serial.close()
             self.serial_disconnected.emit(f"Connection {self.serial.portName} failed", self.serial.portName())
-        if self.serial.canReadLine():
+        while self.serial.canReadLine():
             reply = TachyReply(self.serial.readLine())
             self.register_reply(reply)
         else:
             pass
-        timed_out = [q.check_timeouts() for q in self.queues.values()]
-        if any(timed_out):
-            description = f"Timed out: {str(list(timed_out))}"
-            self.timed_out.emit(description)
 
     def send(self, message: TachyCommand):
         queue = self.queues[message.protocol]

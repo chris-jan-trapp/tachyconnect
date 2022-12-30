@@ -86,7 +86,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.actionextract_capabilities.triggered.connect(self.extract_capabilities)
         self.actiondump_implementation_chart.triggered.connect(self.dump_capabilities)
         self.actionJoystick.triggered.connect(self.show_joystick)
-        self.dispatcher.timed_out.connect(self.log_append)
         self.dispatcher.log.connect(self.log_append)
         self.dispatcher.non_requested_data.connect(self.surprise)
         self.reply_handler.caught_reply.connect(self.log_reply)

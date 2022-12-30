@@ -10,25 +10,24 @@ class TachyRequest(QObject):
     defaults = []
     description = ""
 
-    def __init__(self, time_out = 2, args = []):
+    def __init__(self, args = []):
         super().__init__()
         self.gc_command = str(gc.COMMAND_CODES.get(self.get_class_name()))
-        self.time_out = time_out
         self.args = args
 
     def get_class_name(self):
         return self.__class__.__name__
 
     def __str__(self):
-        return f"{self.get_class_name()}: {', '.join(self.args) if len(self.args) else 'No args'}, {self.time_out} seconds"
+        return f"{self.get_class_name()}: {', '.join(self.args) if len(self.args) else 'No args'}."
 
     def get_gsi_command(self):
         if self.gsi_command == "":
             raise NotImplementedError(f'No GSI command for {self.get_class_name()}')
-        return GSICommand(self.gsi_command, self.get_class_name(), self.time_out, *self.args)
+        return GSICommand(self.gsi_command, self.get_class_name(), *self.args)
 
     def get_geocom_command(self):
-        return GeoCOMCommand(self.gc_command, self.get_class_name(), self.time_out, *self.args)
+        return GeoCOMCommand(self.gc_command, self.get_class_name(), *self.args)
 
     @classmethod
     def get_defaults(cls):

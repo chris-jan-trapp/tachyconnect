@@ -1,4 +1,3 @@
-from socket import timeout
 from PyQt5.QtCore import pyqtSignal, QObject, QEventLoop
 
 from tachyconnect.ts_control import TachyReply
@@ -56,18 +55,16 @@ class CommandChain:
         if self.index < len(self.commands):
             command = self.commands[self.index]
             self.reply_handler.register_command(command.command, self.run_chain)
-            self.dispatcher.send(command.command(timeout=command.timeout, args=command.args).get_geocom_command())
+            self.dispatcher.send(command.command(args=command.args).get_geocom_command())
 
     def reset(self):
         self.index = 0
 
 class ChainableCommand:
-    def __init__(self, command, timeout=2, *args):
+    def __init__(self, command, *args):
         self.command = command
-        self.timeout = timeout
         self.args = args
         print(self.command)
-        print(self.timeout)
         print(self.args)
         print('ChainableCommand ctored.')
 

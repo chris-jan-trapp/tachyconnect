@@ -52,17 +52,17 @@ class TachyJoystick(QDialog, Ui_TachyJoystick):
     ## BEGIN search reply handling
     def searched(self, *args):
         print('searched')
-        self.dispatcher.send(AUT_SetATRStatus(args=[gc.ON_OFF_TYPE.ON.value], time_out=0.8).get_geocom_command())
+        self.dispatcher.send(AUT_SetATRStatus(args=[gc.ON_OFF_TYPE.ON.value]).get_geocom_command())
 
     def tracking(self, *args):
-        self.dispatcher.send(AUS_SetUserLockState(args=[gc.ON_OFF_TYPE.ON.value], time_out=0.8).get_geocom_command())
+        self.dispatcher.send(AUS_SetUserLockState(args=[gc.ON_OFF_TYPE.ON.value]).get_geocom_command())
 
     def set_lock(self, *args):
         self.dispatcher.send(AUT_LockIn().get_geocom_command())
         self.get_lock_state()
     ## END search reply handling
     def get_ref_height(self):
-        self.dispatcher.send(TMC_GetHeight(time_out=10).get_geocom_command())
+        self.dispatcher.send(TMC_GetHeight().get_geocom_command())
 
     def show_ref_height(self, *args):
         z_text = f"{float(args[-1]):.3f}"
@@ -91,7 +91,7 @@ class TachyJoystick(QDialog, Ui_TachyJoystick):
 
     def lock(self):
         self.get_lock_state()
-        self.dispatcher.send(AUT_Search(time_out=30,args=[.1, .3]).get_geocom_command())
+        self.dispatcher.send(AUT_Search(args=[.1, .3]).get_geocom_command())
 
     def lights_off(self):
         self.dispatcher.send(EDM_SetEglIntensity(args=['0']).get_geocom_command())
@@ -138,4 +138,4 @@ class TachyJoystick(QDialog, Ui_TachyJoystick):
         self.set_velocity()
 
     def start_pwr_search(self):
-        self.dispatcher.send(AUT_PS_SearchNext(time_out=100,args=[d.value for d in AUT_PS_SearchNext.defaults]).get_geocom_command())
+        self.dispatcher.send(AUT_PS_SearchNext(args=[d.value for d in AUT_PS_SearchNext.defaults]).get_geocom_command())
